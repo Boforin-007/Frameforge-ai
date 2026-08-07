@@ -1,0 +1,16 @@
+:root {
+  --color-primary: #7c3aed;
+  --color-primary-dark: #6d28d9;
+  --color-primary-light: #8b5cf6;
+  --color-background: #0a0a0f;
+  --color-surface: #13131a;
+  --color-surface-light: #1c1c24;
+  --color-border: #2a2a34;
+  --color-text: #f4f4f5;
+  --color-text-muted: #a1a1aa;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
