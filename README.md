@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FrameForge AI
 
-## Getting Started
+Design branded ID cards, generate them in bulk from a spreadsheet, and export PNG, ZIP, or PDF — with scannable QR verification pages.
 
-First, run the development server:
+## Features
+
+- **Template library** — built-in starting layouts plus your own saved templates ("My templates")
+- **Drag-and-drop editor** — live canvas (Konva) with text, photo, logo, shape, and QR elements
+- **Projects** — save, reopen, rename, and delete designs
+- **Bulk import** — upload a CSV of people, map columns, generate a batch of cards, and download as ZIP or PDF
+- **Downloads** — every export is recorded and can be re-downloaded
+- **Verification** — QR codes on cards link to public `/verify/<id>` pages that confirm the credential
+- **Settings** — profile photo, name, organization, and password
+
+## Tech stack
+
+- Next.js 16 (App Router, Turbopack)
+- React 19, react-konva (canvas editor)
+- MongoDB (Mongoose)
+- Tailwind CSS v4
+- Auth via HTTP-only JWT cookies (jose + bcryptjs)
+
+## Getting started
 
 ```bash
+npm install
+cp .env.example .env.local   # then fill in your values
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Required | Description |
+| --- | --- | --- |
+| `MONGODB_URI` | Yes | MongoDB connection string (Atlas or local). |
+| `AUTH_SECRET` | Yes | Random 32-byte hex string for signing session cookies. Generate with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`. |
+| `NEXT_PUBLIC_VERIFY_BASE_URL` | No | Base URL embedded in card QR codes. Defaults to `https://verify.frameforge.ai`. |
 
-## Learn More
+### Set up MongoDB Atlas
 
-To learn more about Next.js, take a look at the following resources:
+1. Create a free M0 cluster at https://www.mongodb.com/cloud/atlas
+2. Add a database user (Database Access) and allow access from anywhere (Network Access)
+3. Copy the "Connect → Drivers" connection string and put it in `MONGODB_URI`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run dev       # development server
+npm run build     # production build
+npm run start     # start the production server
+npm run lint      # eslint
+npx tsc --noEmit  # typecheck
+```
 
-## Deploy on Vercel
+## Notes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Generated exports (PNG/ZIP/PDF) are written to `storage/exports/<userId>/` and served through authenticated API routes. Both `/storage/` and `/public/uploads/` are gitignored.
+- For production, set `NEXT_PUBLIC_VERIFY_BASE_URL` to your deployed domain so card QR codes resolve correctly.
