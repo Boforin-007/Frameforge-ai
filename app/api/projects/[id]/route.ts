@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getSessionUser } from "@/lib/auth/session";
-import connectDB from "@/lib/db/mongodb";
-import ProjectModel from "@/lib/models/project";
+import { deleteProject, getProject, renameProject } from "@/lib/store";
 
 const renameSchema = z.object({
   name: z.string().trim().min(1).max(200),
@@ -12,16 +10,10 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
   const { id } = await params;
 
   try {
-    await connectDB();
-    const project = await ProjectModel.findOne({ _id: id, user: user.id }).lean().exec();
+    const project = await getProject(id);
     if (!project) {
       return NextResponse.json({ error: "Project not found." }, { status: 404 });
     }
@@ -29,7 +21,7 @@ export async function GET(
     return NextResponse.json(
       {
         project: {
-          id: project._id.toString(),
+          id: project.id,
           name: project.name,
           template: project.template,
           profile: project.profile,
@@ -46,11 +38,6 @@ export async function GET(
 }
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -66,12 +53,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { id } = await params;
 
   try {
-    await connectDB();
-    const result = await ProjectModel.updateOne(
-      { _id: id, user: user.id },
-      { $set: { name: parsed.data.name } }
-    ).exec();
-    if (result.matchedCount === 0) {
+    const ok = await renameProject(id, parsed.data.name);
+    if (!ok) {
       return NextResponse.json({ error: "Project not found." }, { status: 404 });
     }
     return NextResponse.json({ ok: true }, { status: 200 });
@@ -85,17 +68,11 @@ export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
   const { id } = await params;
 
   try {
-    await connectDB();
-    const result = await ProjectModel.deleteOne({ _id: id, user: user.id }).exec();
-    if (result.deletedCount === 0) {
+    const ok = await deleteProject(id);
+    if (!ok) {
       return NextResponse.json({ error: "Project not found." }, { status: 404 });
     }
     return NextResponse.json({ ok: true }, { status: 200 });

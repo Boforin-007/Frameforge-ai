@@ -8,14 +8,13 @@ export function sanitizeSegment(value: string) {
   return value.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 160);
 }
 
-export function userExportDir(userId: string) {
-  return path.join(EXPORT_ROOT, sanitizeSegment(userId));
+function exportDir() {
+  return path.join(EXPORT_ROOT, "workspace");
 }
 
-export async function ensureUserExportDir(userId: string) {
-  const dir = userExportDir(userId);
-  await mkdir(dir, { recursive: true });
-  return dir;
+async function ensureExportDir() {
+  await mkdir(exportDir(), { recursive: true });
+  return exportDir();
 }
 
 export function makeExportFileName(base: string) {
@@ -24,18 +23,17 @@ export function makeExportFileName(base: string) {
   return `${Date.now()}-${randomUUID().slice(0, 8)}-${stem}${extension}`;
 }
 
-export async function writeExportFile(userId: string, storedName: string, data: Buffer) {
-  const dir = await ensureUserExportDir(userId);
-  const filePath = path.join(dir, storedName);
-  await writeFile(filePath, data);
+export async function writeExportFile(storedName: string, data: Buffer) {
+  const dir = await ensureExportDir();
+  await writeFile(path.join(dir, storedName), data);
   return data.length;
 }
 
-/** Reads a previously stored export for a user. Returns null if missing. */
-export async function readExportFile(userId: string, storedName: string) {
+/** Reads a previously stored export file. Returns null if missing. */
+export async function readExportFile(storedName: string) {
   const base = path.basename(storedName);
   if (base !== storedName || base.includes("..")) return null;
-  const filePath = path.join(userExportDir(userId), base);
+  const filePath = path.join(exportDir(), base);
   try {
     return { data: await readFile(filePath), name: base };
   } catch {
@@ -43,21 +41,21 @@ export async function readExportFile(userId: string, storedName: string) {
   }
 }
 
-/** Deletes a single stored export file for a user. Never throws. */
-export async function deleteExportFile(userId: string, storedName: string) {
+/** Deletes a single stored export file. Never throws. */
+export async function deleteExportFile(storedName: string) {
   const base = path.basename(storedName);
   if (base !== storedName || base.includes("..")) return;
   try {
-    await rm(path.join(userExportDir(userId), base), { force: true });
+    await rm(path.join(exportDir(), base), { force: true });
   } catch {
     // File already gone — fine.
   }
 }
 
-/** Deletes the entire export directory for a user. Never throws. */
-export async function deleteUserExportDir(userId: string) {
+/** Deletes the entire export directory. Never throws. */
+export async function deleteAllExports() {
   try {
-    await rm(userExportDir(userId), { recursive: true, force: true });
+    await rm(exportDir(), { recursive: true, force: true });
   } catch {
     // Nothing to delete — fine.
   }

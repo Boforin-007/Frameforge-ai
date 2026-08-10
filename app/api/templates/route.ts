@@ -1,20 +1,11 @@
 import { NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/auth/session";
-import connectDB from "@/lib/db/mongodb";
-import TemplateModel from "@/lib/models/template";
 import { TEMPLATE_SEEDS } from "@/lib/constants";
 import { buildTemplate } from "@/lib/templates";
 import { saveTemplateSchema } from "@/lib/validations/project";
+import { getTemplates, saveTemplate } from "@/lib/store";
 
 export async function GET() {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
   try {
-    await connectDB();
-
     const defaults = TEMPLATE_SEEDS.map((seed) => ({
       id: `default-${seed.slug}`,
       isDefault: true,
@@ -26,14 +17,10 @@ export async function GET() {
       data: buildTemplate(seed),
     }));
 
-    const saved = await TemplateModel.find({ user: user.id })
-      .sort({ createdAt: -1 })
-      .limit(50)
-      .lean()
-      .exec();
+    const saved = await getTemplates();
 
     const savedList = saved.map((t) => ({
-      id: t._id.toString(),
+      id: t.id,
       isDefault: false,
       name: t.name,
       accent: (t.data as { accent?: string }).accent ?? "#6366f1",
@@ -49,11 +36,6 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -70,9 +52,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    await connectDB();
-    const template = await TemplateModel.create({
-      user: user.id,
+    const template = await saveTemplate({
       name: parsed.data.name,
       data: parsed.data.data,
     });
@@ -80,7 +60,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         template: {
-          id: template._id.toString(),
+          id: template.id,
           isDefault: false,
           name: template.name,
           accent: (template.data as { accent?: string }).accent ?? "#6366f1",

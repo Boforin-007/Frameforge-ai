@@ -12,17 +12,14 @@ import {
 } from "lucide-react"
 
 import { getSessionUser } from "@/lib/auth/session"
-import connectDB from "@/lib/db/mongodb"
-import ProjectModel from "@/lib/models/project"
-import GeneratedCardModel from "@/lib/models/generatedCard"
-import TemplateModel from "@/lib/models/template"
+import { getCards, getProjects, getTemplates } from "@/lib/store"
 import { TEMPLATE_SEEDS } from "@/lib/constants"
 import type { ProfileData } from "@/types/template"
 import { StatCard } from "@/components/dashboard/StatCard"
 import { EmptyState } from "@/components/dashboard/EmptyState"
 import { TemplateCard } from "@/components/templates/TemplateCard"
 
-function formatDate(value: Date | undefined) {
+function formatDate(value: string | undefined) {
   if (!value) return ""
   const diff = Date.now() - new Date(value).getTime()
   const minutes = Math.round(diff / 60000)
@@ -41,18 +38,19 @@ function formatDate(value: Date | undefined) {
 
 export default async function DashboardPage() {
   const user = await getSessionUser()
-  const firstName = user?.name.split(" ")[0] ?? "there"
+  const firstName = user.name.split(" ")[0] ?? "there"
 
-  await connectDB()
+  const [projects, cards, savedTemplates] = await Promise.all([
+    getProjects(),
+    getCards(),
+    getTemplates(),
+  ])
 
-  const [projectCount, cardCount, savedTemplateCount, recentProjects, recentCards] =
-    await Promise.all([
-      ProjectModel.countDocuments({ user: user!.id }),
-      GeneratedCardModel.countDocuments({ user: user!.id }),
-      TemplateModel.countDocuments({ user: user!.id }),
-      ProjectModel.find({ user: user!.id }).sort({ updatedAt: -1 }).limit(4).lean().exec(),
-      GeneratedCardModel.find({ user: user!.id }).sort({ createdAt: -1 }).limit(4).lean().exec(),
-    ])
+  const projectCount = projects.length
+  const cardCount = cards.length
+  const savedTemplateCount = savedTemplates.length
+  const recentProjects = projects.slice(0, 4)
+  const recentCards = cards.slice(0, 4)
 
   return (
     <div className="space-y-8">
@@ -128,9 +126,9 @@ export default async function DashboardPage() {
               {recentProjects.map((project) => {
                 const profile = project.profile as ProfileData
                 return (
-                  <li key={project._id.toString()}>
+                  <li key={project.id}>
                     <Link
-                      href={`/generator?project=${project._id.toString()}`}
+                      href={`/generator?project=${project.id}`}
                       className="hh-sticker flex items-center gap-3 bg-hh-cream p-3.5 text-hh-ink transition-all duration-300 hover:-translate-y-0.5"
                     >
                       <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-hh-forest text-hh-cream">
@@ -167,7 +165,7 @@ export default async function DashboardPage() {
             <ul className="flex flex-col gap-3">
               {recentCards.map((card) => (
                 <li
-                  key={card._id.toString()}
+                  key={card.id}
                   className="hh-sticker flex items-center gap-3 bg-hh-cream p-3.5 text-hh-ink"
                 >
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-hh-forest text-hh-cream">

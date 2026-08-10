@@ -265,6 +265,42 @@
       );
     background-size: 24px 24px;
   }
+
+  /* ---- Editorial / technical annotation system (landing) ---- */
+
+  .hh-halftone {
+    background-image: radial-gradient(
+      color-mix(in srgb, var(--hh-cream) 22%, transparent) 1px,
+      transparent 1.6px
+    );
+    background-size: 12px 12px;
+  }
+
+  .hh-halftone-ink {
+    background-image: radial-gradient(
+      color-mix(in srgb, var(--hh-ink) 26%, transparent) 1px,
+      transparent 1.6px
+    );
+    background-size: 12px 12px;
+  }
+
+  .hh-vignette {
+    background: radial-gradient(
+      130% 120% at 50% 0%,
+      rgba(253, 246, 227, 0.1) 0%,
+      rgba(253, 246, 227, 0) 55%
+    );
+  }
+
+  .hh-sun-disc {
+    background: radial-gradient(
+      circle at 50% 50%,
+      var(--hh-sun) 0%,
+      var(--hh-sun) 46%,
+      color-mix(in srgb, var(--hh-sun) 60%, transparent) 68%,
+      transparent 74%
+    );
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

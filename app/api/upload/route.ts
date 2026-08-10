@@ -4,19 +4,12 @@ import path from "node:path";
 import { NextResponse } from "next/server";
 import sharp from "sharp";
 
-import { getSessionUser } from "@/lib/auth/session";
-
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const ACCEPTED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
 
 export async function POST(request: Request) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
   const kind = request.headers.get("x-upload-kind") ?? "photo";
 
   let formData: FormData;
@@ -63,7 +56,7 @@ export async function POST(request: Request) {
     }
 
     const isPng = meta.format === "png";
-    const filename = `${kind}-${user.id}-${randomUUID()}.${isPng ? "png" : "webp"}`;
+    const filename = `${kind}-${randomUUID()}.${isPng ? "png" : "webp"}`;
     const output = isPng ? await image.png().toBuffer() : await image.webp({ quality: 88 }).toBuffer();
 
     await mkdir(UPLOADS_DIR, { recursive: true });

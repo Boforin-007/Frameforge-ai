@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-
-import connectDB from "@/lib/db/mongodb";
-import GeneratedCardModel from "@/lib/models/generatedCard";
+import { findCardByVerifyId } from "@/lib/store";
 import type { ProfileData, CardTemplate } from "@/types/template";
 
 export async function GET(
@@ -14,11 +12,7 @@ export async function GET(
   }
 
   try {
-    await connectDB();
-    const card = await GeneratedCardModel.findOne({ verifyId: slug })
-      .sort({ createdAt: -1 })
-      .lean()
-      .exec();
+    const card = await findCardByVerifyId(slug);
 
     if (!card || !card.profile || !card.template) {
       return NextResponse.json({ error: "Card not found." }, { status: 404 });
@@ -27,7 +21,7 @@ export async function GET(
     return NextResponse.json(
       {
         card: {
-          id: card._id.toString(),
+          id: card.id,
           name: card.name,
           profile: card.profile as ProfileData,
           template: card.template as CardTemplate,

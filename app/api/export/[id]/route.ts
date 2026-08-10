@@ -1,31 +1,20 @@
 import { NextResponse } from "next/server";
-
-import { getSessionUser } from "@/lib/auth/session";
-import connectDB from "@/lib/db/mongodb";
-import GeneratedCardModel from "@/lib/models/generatedCard";
+import { getCard } from "@/lib/store";
 import { readExportFile } from "@/lib/exports";
 
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
   const { id } = await params;
 
   try {
-    await connectDB();
-    const card = await GeneratedCardModel.findOne({ _id: id, user: user.id })
-      .lean()
-      .exec();
+    const card = await getCard(id);
     if (!card || !card.fileName) {
       return NextResponse.json({ error: "Download not found." }, { status: 404 });
     }
 
-    const file = await readExportFile(user.id, card.fileName);
+    const file = await readExportFile(card.fileName);
     if (!file) {
       return NextResponse.json({ error: "Download not found." }, { status: 404 });
     }

@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getSessionUser } from "@/lib/auth/session";
-import connectDB from "@/lib/db/mongodb";
-import GeneratedCardModel, { CARD_FORMATS } from "@/lib/models/generatedCard";
+import { CARD_FORMATS, getCards, recordCard } from "@/lib/store";
 
 const createCardSchema = z.object({
   name: z.string().trim().min(1).max(200),
@@ -12,21 +10,11 @@ const createCardSchema = z.object({
 });
 
 export async function GET() {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
   try {
-    await connectDB();
-    const cards = await GeneratedCardModel.find({ user: user.id })
-      .sort({ createdAt: -1 })
-      .limit(50)
-      .lean()
-      .exec();
+    const cards = await getCards();
 
     const list = cards.map((card) => ({
-      id: card._id.toString(),
+      id: card.id,
       name: card.name,
       format: card.format,
       fileName: card.fileName,
@@ -42,11 +30,6 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -63,9 +46,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    await connectDB();
-    const card = await GeneratedCardModel.create({
-      user: user.id,
+    const card = await recordCard({
       name: parsed.data.name,
       format: parsed.data.format,
       fileName: parsed.data.fileName,
@@ -75,7 +56,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         card: {
-          id: card._id.toString(),
+          id: card.id,
           name: card.name,
           format: card.format,
           createdAt: card.createdAt,

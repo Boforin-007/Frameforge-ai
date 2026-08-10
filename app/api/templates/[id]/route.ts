@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/auth/session";
-import connectDB from "@/lib/db/mongodb";
-import TemplateModel from "@/lib/models/template";
 import { TEMPLATE_SEEDS } from "@/lib/constants";
 import { buildTemplate } from "@/lib/templates";
+import { deleteTemplate, getTemplate, renameTemplate } from "@/lib/store";
 
 const renameSchema = (body: unknown) => {
   const value = (body as { name?: unknown })?.name;
@@ -17,11 +15,6 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
   const { id } = await params;
 
   let body: unknown;
@@ -40,12 +33,11 @@ export async function PATCH(
   }
 
   try {
-    await connectDB();
-    const result = await TemplateModel.updateOne(
-      { _id: id, user: user.id, isDefault: { $ne: true } },
-      { $set: { name: parsed.name } }
-    ).exec();
-    if (result.matchedCount === 0) {
+    if (id.startsWith("default-")) {
+      return NextResponse.json({ error: "Template not found." }, { status: 404 });
+    }
+    const ok = await renameTemplate(id, parsed.name);
+    if (!ok) {
       return NextResponse.json({ error: "Template not found." }, { status: 404 });
     }
     return NextResponse.json({ ok: true }, { status: 200 });
@@ -59,17 +51,14 @@ export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
   const { id } = await params;
 
   try {
-    await connectDB();
-    const result = await TemplateModel.deleteOne({ _id: id, user: user.id }).exec();
-    if (result.deletedCount === 0) {
+    if (id.startsWith("default-")) {
+      return NextResponse.json({ error: "Template not found." }, { status: 404 });
+    }
+    const ok = await deleteTemplate(id);
+    if (!ok) {
       return NextResponse.json({ error: "Template not found." }, { status: 404 });
     }
     return NextResponse.json({ ok: true }, { status: 200 });
@@ -83,16 +72,9 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
   const { id } = await params;
 
   try {
-    await connectDB();
-
     const slug = id.replace(/^default-/, "");
     const seed = TEMPLATE_SEEDS.find((s) => s.slug === slug);
     if (id.startsWith("default-") && seed) {
@@ -102,13 +84,13 @@ export async function GET(
       );
     }
 
-    const template = await TemplateModel.findOne({ _id: id, user: user.id }).lean().exec();
+    const template = await getTemplate(id);
     if (!template) {
       return NextResponse.json({ error: "Template not found." }, { status: 404 });
     }
 
     return NextResponse.json(
-      { template: { id: template._id.toString(), name: template.name, data: template.data } },
+      { template: { id: template.id, name: template.name, data: template.data } },
       { status: 200 }
     );
   } catch (error) {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -9,69 +9,29 @@ import { AlertTriangle, Check, ImageUp, Loader2, Save, X } from "lucide-react"
 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import type { SessionUser } from "@/lib/auth/session"
 
 const profileSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters.").max(80),
   organization: z.string().trim().max(120),
 });
 
-const passwordSchema = z
-  .object({
-    currentPassword: z.string().min(1, "Enter your current password.").max(128),
-    newPassword: z
-      .string()
-      .min(8, "New password must be at least 8 characters.")
-      .max(128),
-  })
-  .refine((d) => d.currentPassword !== d.newPassword, {
-    message: "New password must be different.",
-    path: ["newPassword"],
-  });
-
 type ProfileValues = z.infer<typeof profileSchema>;
-type PasswordValues = z.infer<typeof passwordSchema>;
 
-export function SettingsClient() {
+export function SettingsClient({ user }: { user: SessionUser }) {
   const router = useRouter()
   const [profileState, setProfileState] = useState<"idle" | "saving" | "saved" | "error">("idle")
-  const [passwordState, setPasswordState] = useState<"idle" | "saving" | "saved" | "error">("idle")
-  const [passwordError, setPasswordError] = useState<string | null>(null)
-  const [avatarUrl, setAvatarUrl] = useState<string>("")
+  const [avatarUrl, setAvatarUrl] = useState<string>(user.avatarUrl ?? "")
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const [avatarError, setAvatarError] = useState<string | null>(null)
-  const [memberSince, setMemberSince] = useState("")
-  const [deleteOpen, setDeleteOpen] = useState(false)
-  const [deletePassword, setDeletePassword] = useState("")
-  const [deleting, setDeleting] = useState(false)
-  const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [resetOpen, setResetOpen] = useState(false)
+  const [resetting, setResetting] = useState(false)
+  const [resetError, setResetError] = useState<string | null>(null)
 
   const profileForm = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
-    defaultValues: { name: "", organization: "" },
+    defaultValues: { name: user.name, organization: user.organization },
   })
-  const passwordForm = useForm<PasswordValues>({
-    resolver: zodResolver(passwordSchema),
-    defaultValues: { currentPassword: "", newPassword: "" },
-  })
-
-  useEffect(() => {
-    let cancelled = false
-    fetch("/api/auth/session")
-      .then((res) => (res.ok ? res.json() : Promise.reject(res)))
-      .then((data) => {
-        if (cancelled || !data.user) return
-        profileForm.reset({
-          name: data.user.name ?? "",
-          organization: data.user.organization ?? "",
-        })
-        setAvatarUrl(data.user.avatarUrl ?? "")
-        setMemberSince(data.user.createdAt ?? "")
-      })
-      .catch(() => {})
-    return () => {
-      cancelled = true
-    }
-  }, [profileForm])
 
   async function uploadAvatar(file: File | undefined) {
     if (!file) return
@@ -110,6 +70,7 @@ export function SettingsClient() {
       }
       setAvatarUrl(url)
       setProfileState("saved")
+      router.refresh()
     } catch {
       setAvatarError("Upload failed. Please try again.")
     } finally {
@@ -127,67 +88,40 @@ export function SettingsClient() {
       })
       if (!res.ok) throw new Error("Failed")
       setProfileState("saved")
+      router.refresh()
     } catch {
       setProfileState("error")
     }
   }
 
-  async function savePassword(values: PasswordValues) {
-    setPasswordState("saving")
-    setPasswordError(null)
+  async function confirmReset() {
+    setResetting(true)
+    setResetError(null)
     try {
-      const res = await fetch("/api/account", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      })
-      const data = await res.json().catch(() => null)
+      const res = await fetch("/api/account", { method: "DELETE" })
       if (!res.ok) {
-        setPasswordError(data?.error ?? "Couldn’t update your password.")
-        setPasswordState("error")
+        setResetError("Couldn’t reset the workspace.")
+        setResetting(false)
         return
       }
-      passwordForm.reset()
-      setPasswordState("saved")
-    } catch {
-      setPasswordState("error")
-    }
-  }
-
-  async function confirmDelete() {
-    setDeleting(true)
-    setDeleteError(null)
-    try {
-      const res = await fetch("/api/account", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: deletePassword }),
-      })
-      const data = await res.json().catch(() => null)
-      if (!res.ok) {
-        setDeleteError(data?.error ?? "Couldn’t delete your account.")
-        setDeleting(false)
-        return
-      }
-      router.push("/")
+      setResetOpen(false)
+      router.push("/dashboard")
       router.refresh()
     } catch {
-      setDeleteError("Couldn’t delete your account.")
-      setDeleting(false)
+      setResetError("Couldn’t reset the workspace.")
+      setResetting(false)
     }
   }
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid gap-6 lg:grid-cols-2">
       <section className="hh-sticker bg-hh-cream p-6 text-hh-ink">
         <h2 className="font-display text-base font-bold text-hh-ink">Profile</h2>
         <p className="mt-0.5 text-sm text-hh-ink/60">Your photo, name, and organization.</p>
-        {memberSince && (
-          <p className="mt-1.5 font-mono text-[10px] font-bold tracking-[0.2em] text-hh-ink/50 uppercase">
-            Member since {new Date(memberSince).toLocaleDateString(undefined, { month: "long", year: "numeric" })}
-          </p>
-        )}
+        <p className="mt-1.5 font-mono text-[10px] font-bold tracking-[0.2em] text-hh-ink/50 uppercase">
+          Workspace since{" "}
+          {new Date(user.createdAt).toLocaleDateString(undefined, { month: "long", year: "numeric" })}
+        </p>
 
         <div className="mt-5 flex items-center gap-4">
           {avatarUrl ? (
@@ -226,6 +160,7 @@ export function SettingsClient() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ avatarUrl: "" }),
                   }).catch(() => {})
+                  router.refresh()
                 }}
               >
                 <X className="size-3.5" /> Remove
@@ -269,100 +204,43 @@ export function SettingsClient() {
       </section>
 
       <section className="hh-sticker bg-hh-cream p-6 text-hh-ink">
-        <h2 className="font-display text-base font-bold text-hh-ink">Password</h2>
-        <p className="mt-0.5 text-sm text-hh-ink/60">
-          Update your password. You’ll be asked to enter it on your next sign-in.
-        </p>
-        <form
-          onSubmit={passwordForm.handleSubmit(savePassword)}
-          className="mt-5 flex flex-col gap-4"
-        >
-          <Field label="Current password" error={passwordForm.formState.errors.currentPassword?.message}>
-            <Input type="password" placeholder="••••••••" {...passwordForm.register("currentPassword")} />
-          </Field>
-          <Field label="New password" error={passwordForm.formState.errors.newPassword?.message}>
-            <Input type="password" placeholder="At least 8 characters" {...passwordForm.register("newPassword")} />
-          </Field>
-          <div className="flex items-center justify-between gap-3">
-            {passwordState === "saved" && (
-              <p className="flex items-center gap-1 text-xs text-verify">
-                <Check className="size-3.5" /> Password updated.
-              </p>
-            )}
-            {passwordState === "error" && (
-              <p className="text-xs text-destructive">
-                {passwordError ?? "Couldn’t update your password."}
-              </p>
-            )}
-            <span className="flex-1" />
-            <button
-              type="submit"
-              disabled={passwordState === "saving"}
-              className="inline-flex items-center justify-center gap-1.5 rounded-full border-2 border-hh-ink/30 px-4 py-1.5 text-sm font-semibold text-hh-ink transition-colors hover:border-hh-ink hover:bg-hh-ink/5 disabled:pointer-events-none disabled:opacity-50"
-            >
-              {passwordState === "saving" && (
-                <Loader2 className="size-4 animate-spin" />
-              )}
-              Update password
-            </button>
-          </div>
-        </form>
-      </section>
-      </div>
-
-      <section className="hh-sticker bg-hh-cream p-6 text-hh-ink">
         <h2 className="font-display text-base font-bold text-hh-ink">Danger zone</h2>
         <p className="mt-0.5 text-sm text-hh-ink/60">
-          Permanently delete your account and all your projects, templates, and downloads. This
-          can’t be undone.
+          Reset this workspace — deletes all projects, templates, and downloads stored on this
+          machine. This can’t be undone.
         </p>
-        {!deleteOpen ? (
+        {!resetOpen ? (
           <button
             type="button"
-            onClick={() => setDeleteOpen(true)}
+            onClick={() => setResetOpen(true)}
             className="mt-4 inline-flex items-center gap-1.5 rounded-full border-2 border-hh-pink/50 px-4 py-1.5 text-sm font-bold text-hh-pink transition-colors hover:border-hh-pink hover:bg-hh-pink/10"
           >
-            <AlertTriangle className="size-4" /> Delete account
+            <AlertTriangle className="size-4" /> Reset workspace
           </button>
         ) : (
           <div className="mt-4 flex max-w-md flex-col gap-3">
-            <div className="flex flex-col gap-1.5">
-              <Label>Enter your password to confirm</Label>
-              <Input
-                type="password"
-                value={deletePassword}
-                onChange={(e) => setDeletePassword(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && deletePassword) confirmDelete()
-                }}
-                placeholder="••••••••"
-                autoFocus
-                className="border-hh-ink/30"
-              />
-            </div>
-            {deleteError && <p className="text-xs text-hh-pink">{deleteError}</p>}
+            {resetError && <p className="text-xs text-hh-pink">{resetError}</p>}
             <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
-                onClick={confirmDelete}
-                disabled={deleting || !deletePassword}
+                onClick={confirmReset}
+                disabled={resetting}
                 className="inline-flex items-center gap-1.5 rounded-full border-2 border-hh-pink bg-hh-pink px-4 py-1.5 text-sm font-bold text-hh-cream transition-opacity hover:opacity-90 disabled:pointer-events-none disabled:opacity-50"
               >
-                {deleting ? (
+                {resetting ? (
                   <Loader2 className="size-4 animate-spin" />
                 ) : (
                   <AlertTriangle className="size-4" />
                 )}
-                {deleting ? "Deleting…" : "Permanently delete my account"}
+                {resetting ? "Resetting…" : "Yes, reset everything"}
               </button>
               <button
                 type="button"
                 onClick={() => {
-                  setDeleteOpen(false)
-                  setDeletePassword("")
-                  setDeleteError(null)
+                  setResetOpen(false)
+                  setResetError(null)
                 }}
-                disabled={deleting}
+                disabled={resetting}
                 className="inline-flex items-center justify-center rounded-full border-2 border-hh-ink/25 px-4 py-1.5 text-sm font-semibold text-hh-ink transition-colors hover:bg-hh-ink/5 disabled:pointer-events-none disabled:opacity-50"
               >
                 Cancel

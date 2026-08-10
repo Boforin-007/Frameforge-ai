@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { getSessionUser } from "@/lib/auth/session";
-import connectDB from "@/lib/db/mongodb";
-import GeneratedCardModel from "@/lib/models/generatedCard";
 import { makeExportFileName, writeExportFile } from "@/lib/exports";
 import { createZip } from "@/lib/zip";
+import { recordCard } from "@/lib/store";
 
 const exportFileSchema = z.object({
   fileName: z
@@ -34,11 +32,6 @@ function dataUrlToBuffer(dataUrl: string) {
 }
 
 export async function POST(request: Request) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -55,8 +48,6 @@ export async function POST(request: Request) {
   }
 
   try {
-    await connectDB();
-
     const records = [];
     const zipEntries: { name: string; data: Buffer }[] = [];
 
@@ -65,14 +56,13 @@ export async function POST(request: Request) {
       const format = isJpg ? "jpg" : "png";
       const buffer = dataUrlToBuffer(file.dataUrl);
       const storedName = makeExportFileName(file.fileName);
-      await writeExportFile(user.id, storedName, buffer);
+      await writeExportFile(storedName, buffer);
 
       const displayName = file.fileName
         .replace(/\.(png|jpg)$/i, "")
         .replace(/[-_]+/g, " ")
         .trim();
-      const card = await GeneratedCardModel.create({
-        user: user.id,
+      const card = await recordCard({
         name: displayName || "Card",
         format,
         fileName: storedName,
@@ -82,7 +72,7 @@ export async function POST(request: Request) {
         template: file.template,
       });
       records.push({
-        id: card._id.toString(),
+        id: card.id,
         name: card.name,
         format,
         createdAt: card.createdAt,
@@ -95,17 +85,16 @@ export async function POST(request: Request) {
       const zipName = (parsed.data.zipName || "cards").replace(/\.zip$/i, "") || "cards";
       const storedZipName = makeExportFileName(`${zipName}.zip`);
       const zipBuffer = createZip(zipEntries);
-      await writeExportFile(user.id, storedZipName, zipBuffer);
+      await writeExportFile(storedZipName, zipBuffer);
 
-      const zipCard = await GeneratedCardModel.create({
-        user: user.id,
+      const zipCard = await recordCard({
         name: `${zipName} — ${records.length} cards`,
         format: "zip",
         fileName: storedZipName,
         sizeBytes: zipBuffer.length,
       });
       records.push({
-        id: zipCard._id.toString(),
+        id: zipCard.id,
         name: zipCard.name,
         format: "zip",
         createdAt: zipCard.createdAt,
@@ -117,17 +106,16 @@ export async function POST(request: Request) {
       const pdfName = (parsed.data.pdfName || "cards").replace(/\.pdf$/i, "") || "cards";
       const storedPdfName = makeExportFileName(`${pdfName}.pdf`);
       const pdfBuffer = await buildPdf(zipEntries.map((entry) => entry.data));
-      await writeExportFile(user.id, storedPdfName, pdfBuffer);
+      await writeExportFile(storedPdfName, pdfBuffer);
 
-      const pdfCard = await GeneratedCardModel.create({
-        user: user.id,
+      const pdfCard = await recordCard({
         name: `${pdfName} — ${records.length} cards`,
         format: "pdf",
         fileName: storedPdfName,
         sizeBytes: pdfBuffer.length,
       });
       records.push({
-        id: pdfCard._id.toString(),
+        id: pdfCard.id,
         name: pdfCard.name,
         format: "pdf",
         createdAt: pdfCard.createdAt,

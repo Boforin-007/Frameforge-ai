@@ -4,32 +4,29 @@ import { useState } from "react"
 import Link from "next/link"
 import { Menu, X } from "lucide-react"
 
-import { NAV_LINKS } from "@/lib/constants"
+import { HhGoaLogo } from "@/components/branding/HhGoaLogo"
 
-function Logomark() {
-  return (
-    <span
-      aria-hidden
-      className="relative flex size-7 shrink-0 items-center justify-center rounded-none bg-hh-sun"
-    >
-      <span className="absolute inset-[3px] rounded-none border border-hh-ink/30" />
-      <span className="font-display text-xs font-bold text-hh-ink">
-        F
-      </span>
-    </span>
-  )
-}
+const NAV_LINKS = [
+  { label: "Editor", href: "#product-preview" },
+  { label: "Capabilities", href: "#features" },
+  { label: "Workflow", href: "#how-it-works" },
+] as const
 
 export function Navbar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 border-b border-hh-cream/10 bg-hh-forest/80 text-hh-cream backdrop-blur-sm">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2.5">
-          <Logomark />
-          <span className="font-display text-[15px] font-semibold tracking-tight">
-            FrameForge <span className="text-hh-sun">AI</span>
+    <header className="sticky top-0 z-50 border-b border-hh-cream/15 bg-hh-forest/85 text-hh-cream backdrop-blur-sm">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <Link href="/" className="flex items-center gap-3">
+          <HhGoaLogo className="h-8 w-auto" />
+          <span className="flex flex-col leading-none">
+            <span className="font-display text-[15px] font-extrabold tracking-tight">
+              FRAMEFORGE <span className="text-hh-sun">AI</span>
+            </span>
+            <span className="mt-0.5 font-mono text-[8px] tracking-[0.3em] text-hh-cream/50 uppercase">
+              Identity systems
+            </span>
           </span>
         </Link>
 
@@ -38,32 +35,30 @@ export function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className="font-mono text-[11px] tracking-[0.2em] text-hh-cream/70 uppercase transition-colors hover:text-hh-sun"
+              className="font-mono text-[10px] tracking-[0.25em] text-hh-cream/70 uppercase transition-colors hover:text-hh-sun"
             >
               {link.label}
             </a>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-3 md:flex">
+          <span className="hidden font-mono text-[9px] tracking-[0.2em] text-hh-cream/40 uppercase xl:block">
+            Goa, India · 28–31 Oct 2026
+          </span>
           <Link
-            href="/login"
-            className="rounded-full px-3 py-1.5 text-sm font-medium text-hh-cream/80 transition-colors hover:bg-hh-cream/10 hover:text-hh-cream"
+            href="/dashboard"
+            className="inline-flex items-center gap-2 border-2 border-hh-ink bg-hh-sun px-4 py-2 font-display text-xs font-bold tracking-wide text-hh-ink uppercase transition-colors hover:bg-hh-sun-2"
           >
-            Log in
-          </Link>
-          <Link
-            href="/register"
-            className="rounded-full border-2 border-hh-ink bg-hh-sun px-4 py-1.5 text-sm font-bold text-hh-ink shadow-[3px_4px_0_rgba(11,15,12,0.3)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:bg-hh-sun-2 hover:shadow-[1px_2px_0_rgba(11,15,12,0.3)]"
-          >
-            Get started
+            Open the app
+            <span aria-hidden className="font-mono">→</span>
           </Link>
         </div>
 
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="flex size-9 items-center justify-center rounded-none text-hh-cream/80 hover:bg-hh-cream/10 md:hidden"
+          className="flex size-9 items-center justify-center border border-hh-cream/25 text-hh-cream hover:bg-hh-cream/10 md:hidden"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
         >
@@ -72,33 +67,26 @@ export function Navbar() {
       </div>
 
       {open && (
-        <div className="border-t border-hh-cream/10 bg-hh-forest px-4 pb-4 md:hidden">
+        <div className="border-t border-hh-cream/15 bg-hh-forest px-4 pb-4 md:hidden">
           <nav className="flex flex-col gap-1 pt-3">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="rounded-none px-2 py-2 font-mono text-[11px] tracking-[0.2em] text-hh-cream/80 uppercase hover:bg-hh-cream/10"
+                className="border-l-2 border-transparent px-2 py-2 font-mono text-[10px] tracking-[0.25em] text-hh-cream/80 uppercase hover:border-hh-sun hover:text-hh-sun"
               >
                 {link.label}
               </a>
             ))}
           </nav>
-          <div className="mt-3 flex flex-col gap-2">
-            <Link
-              href="/login"
-              className="justify-center rounded-full border border-hh-cream/30 px-4 py-2 text-center text-sm font-medium text-hh-cream hover:bg-hh-cream/10"
-            >
-              Log in
-            </Link>
-            <Link
-              href="/register"
-              className="justify-center rounded-full border-2 border-hh-ink bg-hh-sun px-4 py-2 text-center text-sm font-bold text-hh-ink"
-            >
-              Get started
-            </Link>
-          </div>
+          <Link
+            href="/dashboard"
+            onClick={() => setOpen(false)}
+            className="mt-3 flex items-center justify-center gap-2 border-2 border-hh-ink bg-hh-sun px-4 py-2.5 font-display text-xs font-bold tracking-wide text-hh-ink uppercase"
+          >
+            Open the app <span aria-hidden className="font-mono">→</span>
+          </Link>
         </div>
       )}
     </header>

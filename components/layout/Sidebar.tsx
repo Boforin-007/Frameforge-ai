@@ -1,16 +1,13 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
   LayoutTemplate,
   PenTool,
   Download,
   Settings,
-  LogOut,
-  Loader2,
   FileSpreadsheet,
   FolderKanban,
   type LucideIcon,
@@ -52,21 +49,31 @@ function Logomark() {
   )
 }
 
+function UserChip({ user }: { user: SessionUser }) {
+  return (
+    <>
+      {user.avatarUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={user.avatarUrl}
+          alt=""
+          className="size-8 shrink-0 rounded-full object-cover"
+        />
+      ) : (
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-hh-sun text-xs font-semibold text-hh-ink">
+          {initials(user.name)}
+        </span>
+      )}
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-medium text-hh-cream">{user.name}</p>
+        <p className="truncate text-xs text-hh-cream/50">{user.organization}</p>
+      </div>
+    </>
+  )
+}
+
 export function Sidebar({ user }: { user: SessionUser }) {
   const pathname = usePathname()
-  const router = useRouter()
-  const [loggingOut, setLoggingOut] = useState(false)
-
-  async function handleLogout() {
-    setLoggingOut(true)
-    try {
-      await fetch("/api/auth/logout", { method: "POST" })
-      router.push("/login")
-      router.refresh()
-    } finally {
-      setLoggingOut(false)
-    }
-  }
 
   const nav = (
     <nav className="flex flex-col gap-0.5">
@@ -110,31 +117,9 @@ export function Sidebar({ user }: { user: SessionUser }) {
         <div className="flex-1 overflow-y-auto px-3 py-4">{nav}</div>
 
         <div className="flex items-center gap-2.5 border-t border-hh-cream/10 p-3">
-          {user.avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={user.avatarUrl}
-              alt=""
-              className="size-8 shrink-0 rounded-full object-cover"
-            />
-          ) : (
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-hh-sun text-xs font-semibold text-hh-ink">
-              {initials(user.name)}
-            </span>
-          )}
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-hh-cream">{user.name}</p>
-            <p className="truncate text-xs text-hh-cream/50">{user.email}</p>
-          </div>
-          <button
-            type="button"
-            onClick={handleLogout}
-            disabled={loggingOut}
-            className="flex size-8 shrink-0 items-center justify-center rounded-none text-hh-cream/60 transition-colors hover:bg-hh-cream/10 hover:text-hh-cream disabled:opacity-50"
-            aria-label="Sign out"
-          >
-            {loggingOut ? <Loader2 className="size-4 animate-spin" /> : <LogOut className="size-4" />}
-          </button>
+          <Link href="/settings" className="flex min-w-0 flex-1 items-center gap-2.5">
+            <UserChip user={user} />
+          </Link>
         </div>
       </aside>
 
@@ -147,29 +132,9 @@ export function Sidebar({ user }: { user: SessionUser }) {
               FrameForge <span className="text-hh-sun">AI</span>
             </span>
           </Link>
-          <div className="flex items-center gap-2">
-            {user.avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={user.avatarUrl}
-                alt=""
-                className="size-8 shrink-0 rounded-full object-cover"
-              />
-            ) : (
-              <span className="flex size-8 items-center justify-center rounded-full bg-hh-sun text-xs font-semibold text-hh-ink">
-                {initials(user.name)}
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={handleLogout}
-              disabled={loggingOut}
-              className="flex size-8 items-center justify-center rounded-none text-hh-cream/60 hover:bg-hh-cream/10 hover:text-hh-cream disabled:opacity-50"
-              aria-label="Sign out"
-            >
-              {loggingOut ? <Loader2 className="size-4 animate-spin" /> : <LogOut className="size-4" />}
-            </button>
-          </div>
+          <Link href="/settings" className="flex items-center gap-2">
+            <UserChip user={user} />
+          </Link>
         </div>
       </div>
       {/* Mobile nav strip */}

@@ -1,52 +1,92 @@
 import Link from "next/link"
 
-const FOOTER_LINKS = [
+import { HhGoaLogo } from "@/components/branding/HhGoaLogo"
+
+const PRODUCT_LINKS = [
   { label: "Editor", href: "#product-preview" },
-  { label: "Features", href: "#features" },
-  { label: "How it works", href: "#how-it-works" },
-  { label: "Log in", href: "/login" },
+  { label: "Capabilities", href: "#features" },
+  { label: "Workflow", href: "#how-it-works" },
+]
+
+const APP_LINKS = [
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Templates", href: "/templates" },
+  { label: "Generator", href: "/generator" },
+  { label: "Downloads", href: "/downloads" },
 ]
 
 export function Footer() {
   return (
-    <footer className="border-t border-hh-cream/10 bg-hh-forest-deep text-hh-cream">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6 md:flex-row md:items-center md:justify-between">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <span className="flex size-6 items-center justify-center rounded-none bg-hh-sun">
-              <span className="font-display text-[10px] font-bold text-hh-ink">
-                F
+    <footer className="border-t border-hh-cream/15 bg-hh-forest-deep text-hh-cream">
+      <div className="mx-auto max-w-6xl px-4 pt-16 pb-10 sm:px-6">
+        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
+          <div>
+            <div className="flex items-center gap-3">
+              <HhGoaLogo className="h-9 w-auto" />
+              <span className="font-display text-lg font-extrabold tracking-tight">
+                FrameForge <span className="text-hh-sun">AI</span>
               </span>
-            </span>
-            <span className="font-display text-sm font-semibold tracking-tight">
-              FrameForge AI
-            </span>
+            </div>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-hh-cream/60">
+              The identity-generation system for HH Goa 2026 — one template,
+              a spreadsheet of names, thousands of verified ID cards and
+              profile frames.
+            </p>
+            <p className="mt-5 font-mono text-[9px] tracking-[0.25em] text-hh-sun uppercase">
+              HH Goa 2026 // Identity systems
+            </p>
           </div>
-          <p className="mt-2 max-w-sm text-sm text-hh-cream/55">
-            Templated ID cards, generated one at a time or by the thousand.
-          </p>
-          <p className="mt-2 font-mono text-[10px] tracking-[0.25em] text-hh-sun uppercase">
-            HH Goa 2026 // Identity systems
-          </p>
+
+          <nav>
+            <p className="font-mono text-[10px] tracking-[0.25em] text-hh-cream/40 uppercase">
+              Product
+            </p>
+            <ul className="mt-4 space-y-2.5">
+              {PRODUCT_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="font-mono text-[11px] tracking-[0.2em] text-hh-cream/70 uppercase transition-colors hover:text-hh-sun"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav>
+            <p className="font-mono text-[10px] tracking-[0.25em] text-hh-cream/40 uppercase">
+              The app
+            </p>
+            <ul className="mt-4 space-y-2.5">
+              {APP_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="font-mono text-[11px] tracking-[0.2em] text-hh-cream/70 uppercase transition-colors hover:text-hh-sun"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
 
-        <nav className="flex flex-wrap gap-x-6 gap-y-2">
-          {FOOTER_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="font-mono text-[11px] tracking-[0.2em] text-hh-cream/70 uppercase transition-colors hover:text-hh-sun"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-      </div>
-
-      <div className="border-t border-hh-cream/10 px-4 py-4 sm:px-6">
-        <p className="mx-auto max-w-6xl font-mono text-[11px] text-hh-cream/40">
-          © {new Date().getFullYear()} FrameForge AI. Built for identity, not just images.
-        </p>
+        <div className="mt-16 border-t border-hh-cream/15 pt-8">
+          <p className="font-mono text-[9px] tracking-[0.3em] text-hh-cream/40 uppercase">
+            FrameForge AI // Identity generation system // Goa, India
+          </p>
+          <p className="mt-4 overflow-hidden font-display text-[13vw] leading-[0.82] font-extrabold tracking-tighter text-hh-cream/10 uppercase select-none sm:text-8xl">
+            FrameForge AI
+          </p>
+          <p className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-hh-cream/15 pt-4 font-mono text-[10px] tracking-[0.2em] text-hh-cream/45 uppercase">
+            <span>© {new Date().getFullYear()} FrameForge AI</span>
+            <span>Built for HH Goa builders · PNG · PDF · ZIP</span>
+            <span>No database // No accounts</span>
+          </p>
+        </div>
       </div>
     </footer>
   )
