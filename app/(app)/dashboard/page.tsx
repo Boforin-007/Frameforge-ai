@@ -11,7 +11,6 @@ import {
   FolderOpen,
 } from "lucide-react"
 
-import { getSessionUser } from "@/lib/auth/session"
 import { getCards, getProjects, getTemplates } from "@/lib/store"
 import { TEMPLATE_SEEDS } from "@/lib/constants"
 import type { ProfileData } from "@/types/template"
@@ -37,9 +36,6 @@ function formatDate(value: string | undefined) {
 }
 
 export default async function DashboardPage() {
-  const user = await getSessionUser()
-  const firstName = user.name.split(" ")[0] ?? "there"
-
   const [projects, cards, savedTemplates] = await Promise.all([
     getProjects(),
     getCards(),
@@ -60,7 +56,7 @@ export default async function DashboardPage() {
             {"// Workspace"}
           </p>
           <h1 className="mt-2 font-display text-2xl font-bold tracking-tight text-hh-cream sm:text-3xl">
-            Welcome back, {firstName}.
+            Welcome.
           </h1>
           <p className="mt-1 text-hh-cream/70">
             Pick a template and generate your next batch of ID cards.
