@@ -144,9 +144,9 @@ export function ProjectsClient() {
                   key={project.id}
                   className="flex items-center gap-3 hh-sticker bg-hh-cream p-3.5 text-hh-ink transition-all duration-300 hover:-translate-y-0.5"
                 >
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-hh-forest text-hh-cream">
-                <FolderKanban className="size-4" />
-              </span>
+              <span className="hh-icon-tile hh-icon-tile--sun flex size-9 shrink-0 items-center justify-center">
+                  <FolderKanban className="size-4" />
+                </span>
               <div className="min-w-0 flex-1">
                 {editingId === project.id ? (
                   <div className="flex items-center gap-2">
@@ -165,7 +165,7 @@ export function ProjectsClient() {
                       onClick={() => renameProject(project.id)}
                       disabled={savingId === project.id}
                       aria-label="Save name"
-                      className="flex size-8 items-center justify-center rounded-full border-2 border-hh-ink bg-hh-sun text-hh-ink transition-transform hover:scale-110 disabled:pointer-events-none disabled:opacity-50"
+                      className="hh-icon-tile hh-icon-tile--sun flex size-8 items-center justify-center transition-transform hover:scale-110 disabled:pointer-events-none disabled:opacity-50"
                     >
                       {savingId === project.id ? (
                         <Loader2 className="size-3.5 animate-spin" />
@@ -177,7 +177,7 @@ export function ProjectsClient() {
                       type="button"
                       onClick={() => setEditingId(null)}
                       aria-label="Cancel"
-                      className="flex size-8 items-center justify-center rounded-full border-2 border-hh-ink/20 text-hh-ink/60 transition-colors hover:bg-hh-ink/5"
+                      className="hh-icon-tile flex size-8 items-center justify-center border-2 border-hh-ink/20 text-hh-ink/60 transition-colors hover:bg-hh-ink/5"
                     >
                       <X className="size-3.5" />
                     </button>
@@ -206,7 +206,7 @@ export function ProjectsClient() {
                     setEditingId(project.id)
                     setEditName(project.name)
                   }}
-                  className="flex size-8 items-center justify-center rounded-full border-2 border-hh-ink/20 text-hh-ink/60 transition-colors hover:bg-hh-ink/5"
+                  className="hh-icon-tile flex size-8 items-center justify-center border-2 border-hh-ink/20 text-hh-ink/60 transition-colors hover:bg-hh-ink/5"
                 >
                   <Pencil className="size-3.5" />
                 </button>
@@ -214,7 +214,7 @@ export function ProjectsClient() {
                   type="button"
                   aria-label="Delete project"
                   onClick={() => deleteProject(project.id)}
-                  className="flex size-8 items-center justify-center rounded-full border-2 border-hh-ink/20 text-hh-ink/60 transition-colors hover:bg-hh-pink/15 hover:text-hh-pink"
+                  className="hh-icon-tile flex size-8 items-center justify-center border-2 border-hh-ink/20 text-hh-ink/60 transition-colors hover:bg-hh-pink/15 hover:text-hh-pink"
                 >
                   <Trash2 className="size-3.5" />
                 </button>

@@ -7,9 +7,9 @@ import { Menu, X } from "lucide-react"
 import { HhGoaLogo } from "@/components/branding/HhGoaLogo"
 
 const NAV_LINKS = [
-  { label: "Editor", href: "#product-preview" },
-  { label: "Capabilities", href: "#features" },
-  { label: "Workflow", href: "#how-it-works" },
+  { label: "Create ID", href: "/dashboard" },
+  { label: "Templates", href: "/templates" },
+  { label: "Downloads", href: "/downloads" },
 ] as const
 
 export function Navbar() {
@@ -22,23 +22,23 @@ export function Navbar() {
           <HhGoaLogo className="h-8 w-auto" />
           <span className="flex flex-col leading-none">
             <span className="font-display text-[15px] font-extrabold tracking-tight">
-              FRAMEFORGE <span className="text-hh-sun">AI</span>
+              HACKER <span className="text-hh-sun">HOUSE</span>
             </span>
             <span className="mt-0.5 font-mono text-[8px] tracking-[0.3em] text-hh-cream/50 uppercase">
-              Identity systems
+              Goa · Identity generator
             </span>
           </span>
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">
           {NAV_LINKS.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className="font-mono text-[10px] tracking-[0.25em] text-hh-cream/70 uppercase transition-colors hover:text-hh-sun"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -50,7 +50,7 @@ export function Navbar() {
             href="/dashboard"
             className="inline-flex items-center gap-2 border-2 border-hh-ink bg-hh-sun px-4 py-2 font-display text-xs font-bold tracking-wide text-hh-ink uppercase transition-colors hover:bg-hh-sun-2"
           >
-            Open the app
+            Create ID
             <span aria-hidden className="font-mono">→</span>
           </Link>
         </div>
@@ -70,14 +70,14 @@ export function Navbar() {
         <div className="border-t border-hh-cream/15 bg-hh-forest px-4 pb-4 md:hidden">
           <nav className="flex flex-col gap-1 pt-3">
             {NAV_LINKS.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
                 className="border-l-2 border-transparent px-2 py-2 font-mono text-[10px] tracking-[0.25em] text-hh-cream/80 uppercase hover:border-hh-sun hover:text-hh-sun"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
           <Link
@@ -85,7 +85,7 @@ export function Navbar() {
             onClick={() => setOpen(false)}
             className="mt-3 flex items-center justify-center gap-2 border-2 border-hh-ink bg-hh-sun px-4 py-2.5 font-display text-xs font-bold tracking-wide text-hh-ink uppercase"
           >
-            Open the app <span aria-hidden className="font-mono">→</span>
+            One-click ID generator <span aria-hidden className="font-mono">→</span>
           </Link>
         </div>
       )}

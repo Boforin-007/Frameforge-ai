@@ -34,6 +34,13 @@ export interface ImageElementConfig extends ElementBase {
   /** Direct URL when source is "upload". */
   url?: string;
   cornerRadius?: number;
+  /**
+   * Photo fit-to-frame controls (source pixels, relative to a centered cover crop).
+   * `cropZoom` ≥ 1 zooms in; `cropX`/`cropY` pan the visible region around center.
+   */
+  cropZoom?: number;
+  cropX?: number;
+  cropY?: number;
 }
 
 export interface QrElementConfig extends ElementBase {
@@ -75,7 +82,9 @@ export type ProfileField =
   | "department"
   | "organization"
   | "email"
-  | "phone";
+  | "phone"
+  | "description"
+  | "tagline";
 
 /** Profile data bound to a card at render time. */
 export interface ProfileData {
@@ -86,6 +95,9 @@ export interface ProfileData {
   organization: string;
   email: string;
   phone: string;
+  description?: string;
+  /** Small role-derived tagline, e.g. "BUILD. BREAK. BUILD BETTER." */
+  tagline?: string;
   photoUrl?: string;
   logoUrl?: string;
 }

@@ -13,6 +13,7 @@ export const profileSchema = z.object({
     .email("Enter a valid email address.")
     .or(z.literal("")),
   phone: z.string().trim().max(40).optional(),
+  description: z.string().trim().max(300).optional(),
 });
 
 export type ProfileInput = z.infer<typeof profileSchema>;

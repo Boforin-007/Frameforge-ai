@@ -59,10 +59,10 @@ function VerifyCardView({ slug }: { slug: string }) {
           <Link href="/" className="flex items-center gap-2">
             <span className="relative flex size-7 items-center justify-center rounded-none bg-hh-sun">
               <span className="absolute inset-[3px] rounded-none border border-hh-ink/30" />
-              <span className="font-display text-xs font-bold text-hh-ink">F</span>
+              <span className="font-display text-xs font-bold text-hh-ink">H</span>
             </span>
             <span className="font-display text-[15px] font-semibold tracking-tight">
-              FrameForge <span className="text-hh-sun">AI</span>
+              HACKER <span className="text-hh-sun">HOUSE</span>
             </span>
           </Link>
           <span className="flex items-center gap-1.5 font-mono text-xs font-bold tracking-[0.15em] text-hh-sun uppercase">
@@ -78,25 +78,25 @@ function VerifyCardView({ slug }: { slug: string }) {
           </div>
         ) : error || !card ? (
           <div className="relative flex flex-col items-center justify-center gap-3 py-24 text-center">
-            <span className="flex size-12 items-center justify-center rounded-none bg-hh-pink/20 text-hh-pink">
+            <span className="hh-icon-tile hh-icon-tile--pink flex size-12 items-center justify-center">
               <Ban className="size-5" />
             </span>
             <p className="font-display text-lg font-bold text-hh-cream">Card not found</p>
             <p className="max-w-sm text-sm text-hh-cream/70">
               {error ??
-                "This card hasn’t been issued through FrameForge, or the link is incorrect."}
+                "This card hasn’t been issued through HACKER HOUSE, or the link is incorrect."}
             </p>
             <Link
               href="/"
               className="mt-2 rounded-full border-2 border-hh-ink bg-hh-sun px-4 py-1.5 font-display text-sm font-bold text-hh-ink shadow-[3px_4px_0_rgba(11,15,12,0.3)] transition-all hover:translate-x-0.5 hover:translate-y-0.5"
             >
-              Go to FrameForge
+              Go to HACKER HOUSE
             </Link>
           </div>
         ) : (
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <span className="flex size-10 items-center justify-center rounded-full bg-hh-sun text-hh-ink">
+              <span className="hh-icon-tile hh-icon-tile--sun flex size-10 items-center justify-center">
                 <BadgeCheck className="size-5" />
               </span>
               <div>
@@ -104,7 +104,7 @@ function VerifyCardView({ slug }: { slug: string }) {
                   Verified credential
                 </p>
                 <p className="text-sm text-hh-cream/70">
-                  This card is genuine and issued by {profile?.organization || "FrameForge"}.
+                  This card is genuine and issued by {profile?.organization || "HACKER HOUSE"}.
                 </p>
               </div>
             </div>

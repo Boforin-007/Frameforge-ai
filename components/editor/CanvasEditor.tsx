@@ -21,9 +21,10 @@ import type Konva from "konva";
 import type { KonvaEventObject } from "konva/lib/Node";
 
 import type { CardElement, CardTemplate, ProfileData } from "@/types/template";
+import { VERIFY_BASE_URL } from "@/lib/constants";
 import { resolveText } from "@/lib/templates";
 import { getQrDataUrl } from "@/lib/qr";
-import { useImage, coverCrop } from "@/hooks/useImage";
+import { useImage, coverCropFit } from "@/hooks/useImage";
 
 export interface CanvasEditorHandle {
   exportPng: (pixelRatio?: number) => void;
@@ -40,6 +41,12 @@ interface CanvasEditorProps {
   readOnly?: boolean;
   /** Image URLs to treat as already-loaded (skipped while waiting for render). */
   immediateUrls?: string[];
+  /**
+   * Optional max *display* width in CSS pixels. The Stage keeps its full
+   * internal coordinate system (for exports) but is shown uniformly scaled
+   * down so the whole card fits without changes to its aspect ratio.
+   */
+  fitWidth?: number;
 }
 
 type BaseCallbacks = {
@@ -138,8 +145,23 @@ function ImageElementNode({
 
   const crop = useMemo(() => {
     if (!image) return null;
-    return coverCrop(image.width, image.height, element.width, element.height);
-  }, [image, element.width, element.height]);
+    return coverCropFit(
+      image.width,
+      image.height,
+      element.width,
+      element.height,
+      element.cropZoom ?? 1,
+      element.cropX ?? 0,
+      element.cropY ?? 0
+    );
+  }, [
+    image,
+    element.width,
+    element.height,
+    element.cropZoom,
+    element.cropX,
+    element.cropY,
+  ]);
 
   if (!image || !crop) {
     return (
@@ -206,7 +228,7 @@ function QrElementNode({
   const value =
     element.value && element.value.trim()
       ? element.value.trim()
-      : "https://verify.frameforge.ai/";
+      : `${VERIFY_BASE_URL}/`;
   const [dataUrl, setDataUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -272,14 +294,59 @@ function QrElementNode({
   );
 }
 
+function BackgroundImageNode({
+  url,
+  width,
+  height,
+}: {
+  url: string
+  width: number
+  height: number
+}) {
+  const image = useImage(url);
+
+  const crop = useMemo(() => {
+    if (!image) return null;
+    return coverCropFit(image.width, image.height, width, height);
+  }, [image, width, height]);
+
+  if (!image || !crop) return null;
+
+  return (
+    <KonvaImage
+      x={0}
+      y={0}
+      width={width}
+      height={height}
+      image={image}
+      crop={crop}
+      listening={false}
+    />
+  );
+}
+
 const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
   function CanvasEditorInner(
-    { template, profile, selectedId, onSelect, onUpdateElement, readOnly = false, immediateUrls = [] },
+    { template, profile, selectedId, onSelect, onUpdateElement, readOnly = false, immediateUrls = [], fitWidth },
     ref
   ) {
     const stageRef = useRef<Konva.Stage | null>(null);
     const trRef = useRef<Konva.Transformer | null>(null);
     const nodeRefs = useRef<Record<string, Konva.Node>>({});
+
+    // Scale the stage down proportionally to fit `fitWidth` while the internal
+    // coordinate system (template.width × template.height) stays untouched, so
+    // exports always render at the canonical dimensions and aspect ratio.
+    const baseWidth = template.width || 750;
+    const baseHeight = template.height || 1000;
+    const scale = fitWidth ? fitWidth / baseWidth : 1;
+    const displayWidth = baseWidth * scale;
+    const displayHeight = baseHeight * scale;
+
+    // Konva exports at stage.width() × pixelRatio; distribute the display scale
+    // into the pixel ratio so the produced image is always the full canonical
+    // resolution (e.g. 750×1000 at pixelRatio 4 → 3000×4000).
+    const exportPx = (pixelRatio = 4) => (scale ? pixelRatio / scale : pixelRatio);
 
     useEffect(() => {
       if (readOnly) {
@@ -292,6 +359,7 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
 
     function imageTargets() {
       const targets: string[] = [];
+      if (template.backgroundImage) targets.push(template.backgroundImage);
       for (const el of template.elements) {
         if (el.kind === "image") {
           const url =
@@ -341,18 +409,18 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
       toDataUrl: (pixelRatio = 4, mimeType = "image/png") => {
         const stage = stageRef.current;
         if (!stage) return null;
-        return stage.toDataURL({ pixelRatio, mimeType });
+        return stage.toDataURL({ pixelRatio: exportPx(pixelRatio), mimeType });
       },
       renderToDataUrl: async (pixelRatio = 4, mimeType = "image/png") => {
         await waitForReady();
         const stage = stageRef.current;
         if (!stage) return null;
-        return stage.toDataURL({ pixelRatio, mimeType });
+        return stage.toDataURL({ pixelRatio: exportPx(pixelRatio), mimeType });
       },
       exportPng: async (pixelRatio = 4) => {
         const dataUrl = await waitForReady().then(() => {
           const stage = stageRef.current;
-          return stage?.toDataURL({ pixelRatio, mimeType: "image/png" });
+          return stage?.toDataURL({ pixelRatio: exportPx(pixelRatio), mimeType: "image/png" });
         });
         if (!dataUrl) return;
         const link = document.createElement("a");
@@ -467,14 +535,17 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
     return (
       <Stage
         ref={stageRef}
-        width={template.width}
-        height={template.height}
+        width={displayWidth}
+        height={displayHeight}
+        scaleX={scale}
+        scaleY={scale}
         onClick={() => {
           if (!readOnly) onSelect(null);
         }}
       >
         <Layer>
           <Rect width={template.width} height={template.height} fill={template.background} />
+          {template.backgroundImage && <BackgroundImageNode url={template.backgroundImage} width={template.width} height={template.height} />}
           {template.elements.map((element) => renderElement(element))}
           <Transformer
             ref={trRef}

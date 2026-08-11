@@ -52,6 +52,7 @@ const FIELD_ALIASES: Record<string, string[]> = {
   phone: ["phone", "mobile", "contact", "telephone", "tel", "phonenumber"],
   photoUrl: ["photo", "photo url", "photo url", "image", "imageurl", "image url", "avatar", "picture", "pic"],
   logoUrl: ["logo", "logo url", "logo url", "logoimage", "logo image"],
+  description: ["description", "bio", "about", "summary", "profile", "short bio", "introduction"],
 };
 
 export type CsvField =
@@ -63,7 +64,8 @@ export type CsvField =
   | "email"
   | "phone"
   | "photoUrl"
-  | "logoUrl";
+  | "logoUrl"
+  | "description";
 
 /** Suggests a header index (or undefined) for each known field, auto-matching by alias. */
 export function suggestMapping(headers: string[]): Record<CsvField, number | undefined> {
@@ -78,6 +80,7 @@ export function suggestMapping(headers: string[]): Record<CsvField, number | und
     phone: undefined,
     photoUrl: undefined,
     logoUrl: undefined,
+    description: undefined,
   };
 
   for (const field of Object.keys(FIELD_ALIASES) as CsvField[]) {

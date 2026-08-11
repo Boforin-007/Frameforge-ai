@@ -131,6 +131,7 @@ export function ProfileForm({
       organization: initialValues?.organization ?? defaultOrganization ?? "",
       email: initialValues?.email ?? "",
       phone: initialValues?.phone ?? "",
+      description: initialValues?.description ?? "",
     },
   })
 
@@ -143,6 +144,7 @@ export function ProfileForm({
       organization: values.organization,
       email: values.email ?? "",
       phone: values.phone ?? "",
+      description: values.description ?? "",
       photoUrl,
       logoUrl,
     })
@@ -171,6 +173,9 @@ export function ProfileForm({
         </Field>
         <Field label="Phone" error={errors.phone?.message}>
           <Input id="phone" type="tel" placeholder="+91 98765 43210" {...register("phone")} />
+        </Field>
+        <Field label="Description / bio" error={errors.description?.message}>
+          <Input id="description" placeholder="One-line intro for the badge" {...register("description")} />
         </Field>
       </div>
 

@@ -52,6 +52,7 @@ const EMPTY_PROFILE: ProfileData = {
   organization: "",
   email: "",
   phone: "",
+  description: "",
   photoUrl: undefined,
   logoUrl: undefined,
 }
@@ -83,7 +84,7 @@ function PickerCard({
               ? template.name.split("—")[0].trim().toUpperCase()
               : template.name.toUpperCase()}
           </span>
-          <span className="font-mono text-[9px] tracking-[0.22em] text-hh-ink/60 uppercase">FF</span>
+          <span className="font-mono text-[9px] tracking-[0.22em] text-hh-ink/60 uppercase">HH</span>
         </div>
       </div>
       <div className="px-1 pt-3 pb-1">
@@ -437,7 +438,7 @@ export function Generator({
             type="button"
             onClick={() => setStep("profile")}
             aria-label="Back to profile"
-            className="flex size-9 items-center justify-center rounded-full border-2 border-hh-cream/30 text-hh-cream transition-colors hover:border-hh-cream/60 hover:bg-hh-cream/10"
+            className="hh-icon-tile hh-icon-tile--forest flex size-9 items-center justify-center transition-colors hover:border-hh-cream/60 hover:bg-hh-cream/10"
           >
             <ArrowLeft className="size-4" />
           </button>
@@ -654,7 +655,7 @@ export function Generator({
               <button
                 type="button"
                 onClick={() => setTemplateSaveOpen(false)}
-                className="rounded-full p-1 text-hh-ink/60 hover:bg-hh-ink/10"
+                className="hh-icon-tile flex size-7 items-center justify-center p-0 text-hh-ink/60 hover:bg-hh-ink/10"
                 aria-label="Close"
               >
                 <X className="size-4" />
@@ -742,7 +743,7 @@ function PropertiesPanel({
 
       {element.kind === "text" && (
         <>
-          <Field label="Content — use {{name}}, {{id}}, {{designation}}, {{department}}, {{organization}}, {{email}}, {{phone}}">
+          <Field label="Content — use {{name}}, {{id}}, {{designation}}, {{department}}, {{organization}}, {{email}}, {{phone}}, {{tagline}}">
             <textarea
               value={element.text}
               onChange={(e) => patch({ text: e.target.value })}
@@ -819,9 +820,51 @@ function PropertiesPanel({
       )}
 
       {element.kind === "image" && (
-        <p className="text-xs text-hh-ink/60">
-          This slot renders your {element.source === "photo" ? "profile photo" : "organization logo"}.
-        </p>
+        <>
+          <p className="text-xs text-hh-ink/60">
+            This slot renders your {element.source === "photo" ? "profile photo" : "organization logo"}.
+            It{" "}
+            {element.source === "photo"
+              ? "covers the frame automatically — drag the sliders to position and zoom."
+              : "is shown as-is."}
+          </p>
+          <Field label="Zoom">
+            <input
+              type="range"
+              min={1}
+              max={4}
+              step={0.1}
+              value={element.cropZoom ?? 1}
+              onChange={(e) => patch({ cropZoom: Number(e.target.value) })}
+              className="w-full accent-[#0b6839]"
+            />
+            <span className="mt-1 block text-right font-mono text-[11px] text-hh-ink/50">
+              {((element.cropZoom ?? 1) * 100).toFixed(0)}%
+            </span>
+          </Field>
+          <Field label="Pan left / right">
+            <input
+              type="range"
+              min={-1}
+              max={1}
+              step={0.02}
+              value={element.cropX ?? 0}
+              onChange={(e) => patch({ cropX: Number(e.target.value) })}
+              className="w-full accent-[#0b6839]"
+            />
+          </Field>
+          <Field label="Pan up / down">
+            <input
+              type="range"
+              min={-1}
+              max={1}
+              step={0.02}
+              value={element.cropY ?? 0}
+              onChange={(e) => patch({ cropY: Number(e.target.value) })}
+              className="w-full accent-[#0b6839]"
+            />
+          </Field>
+        </>
       )}
     </div>
   )

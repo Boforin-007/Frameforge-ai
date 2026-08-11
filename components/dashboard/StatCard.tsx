@@ -1,10 +1,12 @@
 import type { LucideIcon } from "lucide-react"
 
+import { HhIconTile } from "@/components/ui/icon"
+
 export function StatCard({
   label,
   value,
   hint,
-  icon: Icon,
+  icon,
 }: {
   label: string
   value: string | number
@@ -17,9 +19,7 @@ export function StatCard({
         <p className="truncate font-mono text-[10px] tracking-[0.2em] text-hh-ink/60 uppercase">
           {label}
         </p>
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-hh-forest text-hh-cream">
-          <Icon className="size-4" />
-        </span>
+        <HhIconTile icon={icon} tone="sun" size="size-8" />
       </div>
       <p className="mt-3 font-display text-3xl font-extrabold tracking-tight text-hh-ink">
         {value}

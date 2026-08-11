@@ -196,7 +196,7 @@ export function TemplatesClient() {
                             aria-label="Save name"
                             onClick={() => renameTemplate(t.id)}
                             disabled={savingRename || !editName.trim()}
-                            className="flex size-7 shrink-0 items-center justify-center rounded-full border-2 border-hh-ink bg-hh-sun text-hh-ink transition-transform hover:scale-110 disabled:pointer-events-none disabled:opacity-50"
+                            className="hh-icon-tile hh-icon-tile--sun flex size-7 shrink-0 items-center justify-center transition-transform hover:scale-110 disabled:pointer-events-none disabled:opacity-50"
                           >
                             {savingRename ? (
                               <Loader2 className="size-3.5 animate-spin" />
@@ -208,7 +208,7 @@ export function TemplatesClient() {
                             type="button"
                             aria-label="Cancel"
                             onClick={() => setEditingId(null)}
-                            className="flex size-7 shrink-0 items-center justify-center rounded-full border-2 border-hh-ink/20 text-hh-ink/60 transition-colors hover:bg-hh-ink/5"
+                            className="hh-icon-tile flex size-7 shrink-0 items-center justify-center border-2 border-hh-ink/20 text-hh-ink/60 transition-colors hover:bg-hh-ink/5"
                           >
                             <X className="size-3.5" />
                           </button>
@@ -229,7 +229,7 @@ export function TemplatesClient() {
                                 setEditingId(t.id)
                                 setEditName(t.name)
                               }}
-                              className="flex size-7 items-center justify-center rounded-full border-2 border-hh-ink/20 text-hh-ink/60 transition-colors hover:bg-hh-ink/5"
+                              className="hh-icon-tile flex size-7 items-center justify-center border-2 border-hh-ink/20 text-hh-ink/60 transition-colors hover:bg-hh-ink/5"
                             >
                               <Pencil className="size-3.5" />
                             </button>
@@ -237,7 +237,7 @@ export function TemplatesClient() {
                               type="button"
                               aria-label="Delete template"
                               onClick={() => removeTemplate(t.id)}
-                              className="flex size-7 items-center justify-center rounded-full border-2 border-hh-ink/20 text-hh-ink/60 transition-colors hover:bg-hh-pink/15 hover:text-hh-pink"
+                              className="hh-icon-tile flex size-7 items-center justify-center border-2 border-hh-ink/20 text-hh-ink/60 transition-colors hover:bg-hh-pink/15 hover:text-hh-pink"
                             >
                               <Trash2 className="size-3.5" />
                             </button>

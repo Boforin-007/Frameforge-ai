@@ -33,6 +33,7 @@ const FIELDS: Array<{ key: CsvField; label: string }> = [
   { key: "organization", label: "Organization" },
   { key: "email", label: "Email" },
   { key: "phone", label: "Phone" },
+  { key: "description", label: "Description / bio" },
   { key: "photoUrl", label: "Photo (URL)" },
   { key: "logoUrl", label: "Logo (URL)" },
 ]
@@ -65,9 +66,9 @@ function templateForProfile(template: CardTemplate, profile: ProfileData): CardT
 
 function downloadSampleCsv() {
   const sample = [
-    "Name,ID,Designation,Department,Organization,Email,Phone",
-    "Priya Raman,NL-0294,Senior Product Designer,Design,Nimbus Labs,priya@nimbus.ai,+91 98765 43210",
-    "Arjun Mehta,AC-1103,Backend Engineer,Engineering,Nimbus Labs,arjun@nimbus.ai,+91 91234 56780",
+    "Name,ID,Designation,Department,Organization,Email,Phone,Description",
+    "Priya Raman,NL-0294,Senior Product Designer,Design,Nimbus Labs,priya@nimbus.ai,+91 98765 43210,Building identity systems by the coast",
+    "Arjun Mehta,AC-1103,Backend Engineer,Engineering,Nimbus Labs,arjun@nimbus.ai,+91 91234 56780,Ships reliable code and cold chai",
   ].join("\n");
   const url = URL.createObjectURL(new Blob([sample], { type: "text/csv" }));
   const link = document.createElement("a");
@@ -113,6 +114,7 @@ export function BulkClient() {
         organization: get("organization"),
         email: get("email"),
         phone: get("phone"),
+        description: get("description") || undefined,
         photoUrl: get("photoUrl") || undefined,
         logoUrl: get("logoUrl") || undefined,
       };
@@ -493,7 +495,7 @@ export function BulkClient() {
               </div>
             ) : (
               <div className="flex flex-col items-center gap-4 py-16 text-center">
-                <span className="flex size-12 items-center justify-center rounded-full border-2 border-hh-ink bg-hh-sun text-hh-ink">
+                <span className="hh-icon-tile hh-icon-tile--sun flex size-12 items-center justify-center">
                   <FolderOpen className="size-5" />
                 </span>
                 <div>

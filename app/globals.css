@@ -11,6 +11,7 @@
   --font-mono: var(--font-mono);
   --font-display: var(--font-display);
   --font-heading: var(--font-display);
+  --font-serif: var(--font-serif);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-paper: var(--paper);
@@ -300,6 +301,79 @@
       color-mix(in srgb, var(--hh-sun) 60%, transparent) 68%,
       transparent 74%
     );
+  }
+
+  /* ---- Hack The House Goa — unified icon system (retro editorial) ----
+     Applies to every lucide icon site-wide so no icon keeps a default or
+     SaaS-y look. Color always comes from the calling context (text-*), so
+     the icon reacts to normal/active/hover/destructive states automatically. */
+  .hh-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    stroke-width: 2.25;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+  }
+
+  /* Every lucide icon inherits the system by default. Opt out per-icon with
+     .hh-icon-default (rare — e.g. spinners that need round caps). */
+  .lucide,
+  svg[class*="lucide"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    stroke-width: 2.25;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+  }
+  .lucide.lucide-loader-2,
+  .lucide.lucide-loader-circle {
+    stroke-linecap: round;
+  }
+
+  /* Squared "event poster" icon tile — the HH Goa badge treatment. */
+  .hh-icon-tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid var(--hh-ink);
+    color: var(--hh-ink);
+  }
+  .hh-icon-tile--sun {
+    background: var(--hh-sun);
+    color: var(--hh-ink);
+  }
+  .hh-icon-tile--forest {
+    background: var(--hh-forest);
+    color: var(--hh-cream);
+  }
+  .hh-icon-tile--forest-deep {
+    background: var(--hh-forest-deep);
+    color: var(--hh-sun);
+  }
+  .hh-icon-tile--pink {
+    background: color-mix(in srgb, var(--hh-pink) 16%, transparent);
+    color: var(--hh-pink);
+    border-color: color-mix(in srgb, var(--hh-pink) 45%, transparent);
+  }
+  .hh-icon-tile--cream {
+    background: var(--hh-cream);
+    color: var(--hh-ink);
+  }
+  .hh-icon-tile--ink {
+    background: var(--hh-ink);
+    color: var(--hh-sun);
+  }
+  .hh-icon-tile .hh-icon,
+  .hh-icon-tile svg[class*="lucide"] {
+    stroke-width: 2.5;
+  }
+  .hh-icon-tile:hover {
+    filter: brightness(0.92);
   }
 }
 

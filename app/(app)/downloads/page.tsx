@@ -195,7 +195,7 @@ export default function DownloadsPage() {
                     key={card.id}
                     className="hh-sticker flex items-center gap-3 bg-hh-cream p-3.5 text-hh-ink"
                   >
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-hh-forest text-hh-cream">
+                    <span className="hh-icon-tile hh-icon-tile--sun flex size-9 shrink-0 items-center justify-center">
                       <Icon className="size-4" />
                     </span>
                     <div className="min-w-0 flex-1">
@@ -217,7 +217,7 @@ export default function DownloadsPage() {
                       type="button"
                       aria-label="Delete download"
                       onClick={() => deleteCard(card.id)}
-                      className="flex size-8 shrink-0 items-center justify-center rounded-full border-2 border-hh-ink/20 text-hh-ink/60 transition-colors hover:bg-hh-pink/15 hover:text-hh-pink"
+                      className="hh-icon-tile flex size-8 shrink-0 items-center justify-center border-2 border-hh-ink/20 text-hh-ink/60 transition-colors hover:bg-hh-pink/15 hover:text-hh-pink"
                     >
                       <Trash2 className="size-3.5" />
                     </button>

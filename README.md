@@ -1,18 +1,26 @@
-# FrameForge AI
+# HACKER HOUSE — GOA · Identity Generator
 
-Design branded ID cards, generate them in bulk from a spreadsheet, and export PNG, ZIP, or PDF — with scannable QR verification pages. Built for HH Goa builders, identity edition 2026.
+The one-click identity generator for HACKER HOUSE GOA builders. Enter your
+details, drop in a photo, hit generate, and download a verified HACKER HOUSE
+GOA ID card as PNG or PDF — with a scannable QR that links to a public
+verification page.
 
-No database, no accounts. Everything runs with local file storage on disk.
+No database, no accounts. Everything runs on local file storage.
 
 ## Features
 
-- **Template library** — built-in starting layouts plus your own saved templates ("My templates")
-- **Drag-and-drop editor** — live canvas (Konva) with text, photo, logo, shape, and QR elements
-- **Projects** — save, reopen, rename, and delete designs
-- **Bulk import** — upload a CSV of people, map columns, generate a batch of cards, and download as ZIP or PDF
-- **Downloads** — every export is recorded and can be re-downloaded
-- **Verification** — QR codes on cards link to public `/verify/<id>` pages that confirm the credential
-- **Settings** — profile photo, name, and organization; plus a "Reset workspace" danger zone
+- **One-click ID generator** — your ID number is generated automatically
+  (`HH-2026-XXXX`), the QR and verification link embed themselves, and the card
+  preview updates live as you type.
+- **Photo adjustment** — upload a photo and fine-tune zoom + pan before export.
+- **Live canvas editor** — full Konva editor with text, photo, logo, shape, and
+  QR elements for full control.
+- **Bulk import** — generate a batch of ID cards from a CSV with column mapping.
+- **Downloads** — every export is recorded and can be re-downloaded.
+- **Verification** — QR codes on cards link to public `/verify/<id>` pages that
+  confirm the credential.
+- **Records & projects** — manage saved cards, templates, and projects from the
+  dashboard.
 
 ## Tech stack
 
@@ -28,13 +36,14 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The landing page leads straight into the app — there is no login.
+Open [http://localhost:3000](http://localhost:3000). The landing page leads
+straight into the app — there is no login.
 
 ### Environment variables
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `NEXT_PUBLIC_VERIFY_BASE_URL` | No | Base URL embedded in card QR codes. Defaults to `https://verify.frameforge.ai`. |
+| `NEXT_PUBLIC_VERIFY_BASE_URL` | No | Base URL embedded in card QR codes. Defaults to `https://verify.hhgoa.in`. |
 
 ## Scripts
 
@@ -48,5 +57,8 @@ npx tsc --noEmit  # typecheck
 
 ## Notes
 
-- All data (projects, templates, generated cards, profile) is stored as JSON under `storage/data/`. Exports are written to `storage/exports/workspace/`. The whole `storage/` folder is gitignored.
-- For production, set `NEXT_PUBLIC_VERIFY_BASE_URL` to your deployed domain so card QR codes resolve correctly.
+- All data (templates, generated cards, profile) is stored as JSON under
+  `storage/data/`. Exports are written to `storage/exports/workspace/`. The
+  whole `storage/` folder is gitignored.
+- For production, set `NEXT_PUBLIC_VERIFY_BASE_URL` to your deployed domain so
+  card QR codes resolve correctly.
