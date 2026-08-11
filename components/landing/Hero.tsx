@@ -30,13 +30,6 @@ export function Hero() {
           </h1>
         </div>
 
-        {/* product identity block */}
-        <div className="relative mt-8 flex w-full max-w-3xl flex-col items-center gap-2 border-y border-hh-cream/20 py-4">
-          <span className="font-display text-2xl font-extrabold tracking-tight text-hh-cream uppercase sm:text-3xl">
-            Identity Generator
-          </span>
-        </div>
-
         {/* actions */}
         <div className="relative mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
           <SharpLink href="/dashboard">

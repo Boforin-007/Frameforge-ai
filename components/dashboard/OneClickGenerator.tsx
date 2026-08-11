@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useRef, useState } from "react"
+import { useId, useMemo, useRef, useState } from "react"
 import {
   Check,
   Download,
@@ -38,12 +38,9 @@ function buildHhGoaTemplate(): CardTemplate {
   return buildTemplate(seed)
 }
 
-function generateCardId(): string {
-  const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
-  let token = ""
-  for (let i = 0; i < 4; i++) {
-    token += chars[Math.floor(Math.random() * chars.length)]
-  }
+function generateCardId(seed: string): string {
+  const hash = seed.replace(/[^a-zA-Z0-9]/g, "").slice(0, 4).toUpperCase()
+  const token = hash.padEnd(4, "X")
   return `HH-2026-${token}`
 }
 
@@ -62,7 +59,7 @@ export function OneClickGenerator({
   const canvasRef = useRef<CanvasEditorHandle>(null)
 
   const [name, setName] = useState("")
-  const [id] = useState(() => generateCardId())
+  const id = generateCardId(useId())
   const [designation, setDesignation] = useState("")
   const [organization, setOrganization] = useState(defaultOrganization ?? "")
   const [photoUrl, setPhotoUrl] = useState<string | undefined>(undefined)
@@ -90,7 +87,7 @@ export function OneClickGenerator({
 
   /** Apply the QR value + live photo adjustments onto the base template. */
   const template: CardTemplate = useMemo(() => {
-    const value = `${VERIFY_BASE_URL}/${id}`
+    const value = `${VERIFY_BASE_URL}/${id || "hh-goa"}`
     return {
       ...baseTemplate,
       elements: baseTemplate.elements.map((el) => {
@@ -188,7 +185,7 @@ export function OneClickGenerator({
     try {
       const dataUrl = await canvasRef.current?.renderToDataUrl(4, "image/png")
       if (!dataUrl) return
-      const verifyUrl = `${VERIFY_BASE_URL}/${id}`
+      const verifyUrl = `${VERIFY_BASE_URL}/${id || "hh-goa"}`
       const status = `${name.trim() || "HACKER HOUSE"} · ${roleTagline(designation)} — grab my Hacker House Goa ID → ${verifyUrl}`
 
       const hasShareFiles = typeof navigator !== "undefined" && "canShare" in navigator
@@ -489,8 +486,8 @@ export function OneClickGenerator({
             </button>
           </div>
           <p className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.15em] text-hh-ink/55 uppercase">
-            <QrCode className="size-3.5" /> ID {id} · QR auto-embeds
-            · verify.hhgoa.in/{id}
+            <QrCode className="size-3.5" /> ID {id || "generating…"} · QR auto-embeds
+            · verify.hhgoa.in/{id || "hh-goa"}
           </p>
         </section>
       </div>
