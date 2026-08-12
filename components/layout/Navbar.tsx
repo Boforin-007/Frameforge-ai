@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Menu, X } from "lucide-react"
 
-import { HhGoaLogo } from "@/components/branding/HhGoaLogo"
+import { HhFullLogo } from "@/components/branding/HhFullLogo"
 
 const NAV_LINKS = [
   { label: "Create ID", href: "/dashboard" },
@@ -18,16 +18,8 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-hh-cream/15 bg-hh-forest/85 text-hh-cream backdrop-blur-sm">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-3">
-          <HhGoaLogo className="h-8 w-auto" />
-          <span className="flex flex-col leading-none">
-            <span className="font-display text-[15px] font-extrabold tracking-tight">
-              HACKER <span className="text-hh-sun">HOUSE</span>
-            </span>
-            <span className="mt-0.5 font-mono text-[8px] tracking-[0.3em] text-hh-cream/50 uppercase">
-              Goa · Identity generator
-            </span>
-          </span>
+        <Link href="/" className="flex items-center">
+          <HhFullLogo textClassName="text-[clamp(1.1rem,2.6vw,1.75rem)]" goaClassName="h-[0.5em] w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">

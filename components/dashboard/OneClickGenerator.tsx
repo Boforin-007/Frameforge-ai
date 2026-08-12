@@ -12,7 +12,6 @@ import {
   QrCode,
   RotateCcw,
   Share2,
-  Squircle,
   X,
   ZoomIn,
 } from "lucide-react"
@@ -32,6 +31,7 @@ import { downloadDataUrl, recordExports } from "@/lib/client-export"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { roleTagline } from "@/lib/taglines"
+import { GoaDecor } from "@/components/dashboard/GoaDecor"
 
 function buildHhGoaTemplate(): CardTemplate {
   const seed = TEMPLATE_SEEDS[0]
@@ -216,279 +216,269 @@ export function OneClickGenerator({
   }
 
   return (
-    <div className="space-y-8">
-      {/* ═════ CREATE ID header ═════ */}
-      <div className="flex flex-col justify-between gap-2 border-y-2 border-hh-ink bg-hh-forest-deep px-4 py-3 sm:flex-row sm:items-center">
-        <div className="flex items-center gap-3">
-          <span className="hh-icon-tile hh-icon-tile--sun size-8">
-            <Squircle className="size-4" strokeWidth={2.5} />
-          </span>
-          <div>
-            <p className="font-mono text-[10px] font-bold tracking-[0.25em] text-hh-pink uppercase">
-              Create ID
-            </p>
-            <p className="font-display text-sm font-extrabold tracking-wide text-hh-cream uppercase">
-              {TEMPLATE_SEEDS[0].name}
-            </p>
-          </div>
-        </div>
-        <p className="font-mono text-[9px] tracking-[0.2em] text-hh-cream/50 uppercase">
-          Photo + fields update the card live
-        </p>
-      </div>
+    <div
+      className="relative"
+      style={{ fontFamily: "'Times New Roman', Times, serif" }}
+    >
+      {/* Goa decorative frame */}
+      <GoaDecor />
 
-      <div className="mx-auto flex max-w-3xl flex-col gap-6">
-        {/* ═════ FIELD DATA — middle ═════ */}
-        <section className="rounded-none border-2 border-hh-ink bg-hh-cream p-5 text-hh-ink shadow-[6px_8px_0_rgba(0,0,0,0.25)]">
-          <div>
-            <div className="mb-3 flex items-center justify-between border-b-2 border-dashed border-hh-ink/25 pb-2">
-              <p className="font-mono text-[10px] font-bold tracking-[0.25em] uppercase">
-                {"// Field data"}
-              </p>
-              <span className="font-mono text-[9px] tracking-[0.2em] text-hh-ink/50 uppercase">
-                LIVE
-              </span>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-col gap-1.5">
-                <Label className="font-mono text-[10px] font-bold tracking-[0.2em] text-hh-ink/70 uppercase">
-                  Full name
-                </Label>
-                <Input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your name"
-                  className="rounded-none border-2 border-hh-ink/30 focus:border-hh-ink"
-                  autoFocus
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label className="font-mono text-[10px] font-bold tracking-[0.2em] text-hh-ink/70 uppercase">
-                  Role / designation
-                </Label>
-                <Input
-                  value={designation}
-                  onChange={(e) => setDesignation(e.target.value)}
-                  placeholder="Robotics Builder"
-                  className="rounded-none border-2 border-hh-ink/30 focus:border-hh-ink"
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label className="font-mono text-[10px] font-bold tracking-[0.2em] text-hh-ink/70 uppercase">
-                  Organization
-                </Label>
-                <Input
-                  value={organization}
-                  onChange={(e) => setOrganization(e.target.value)}
-                  placeholder="Hacker House Goa"
-                  className="rounded-none border-2 border-hh-ink/30 focus:border-hh-ink"
-                />
+      <div className="relative z-10 space-y-10">
+        {/* ═════ MAIN HERO / GENERATOR — headline + live preview ═════ */}
+        <section className="grid items-start gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+          {/* LEFT — headline + quick form */}
+          <div className="flex flex-col gap-6">
+            <div>
+              <div>
+                <h1
+                  className="font-serif text-[clamp(2rem,5vw,3.5rem)] leading-[0.95] font-bold tracking-tight text-hh-sun uppercase"
+                  style={{ fontFamily: "'Times New Roman', Times, serif" }}
+                >
+                  No bugs.
+                  <br />
+                  Just beaches.
+                </h1>
               </div>
             </div>
 
-            <div className="mt-4 flex items-center gap-2 border-t-2 border-dashed border-hh-ink/25 pt-3">
-              <span className="border-2 border-hh-ink bg-hh-sun px-2 py-1 font-mono text-[9px] font-bold tracking-[0.15em] text-hh-ink uppercase">
-                Tagline
-              </span>
-              <p className="min-w-0 flex-1 truncate text-xs font-semibold tracking-wide text-hh-ink/75 uppercase">
-                {`"${roleTagline(designation)}"`}
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* ═════ IMAGE ADJUSTMENT — small, below the field data ═════ */}
-        <section className="rounded-none border-2 border-hh-ink bg-hh-cream p-5 text-hh-ink shadow-[6px_8px_0_rgba(0,0,0,0.25)]">
-          <div>
-            <div className="mb-3 flex items-center gap-2">
-              <span className="flex size-7 items-center justify-center border-2 border-hh-ink bg-hh-sun">
-                <MoveHorizontal className="size-3.5" />
-              </span>
-              <p className="font-mono text-[10px] font-bold tracking-[0.25em] uppercase">
-                {"// ID photo"}
-              </p>
-            </div>
-
-            {photoUrl ? (
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="relative size-16 shrink-0 overflow-hidden rounded-none border-2 border-hh-ink/20">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={photoUrl}
-                      alt="Profile photo"
-                      className="size-full object-cover"
+            {/* ═════ QUICK GENERATION FORM — field data ═════ */}
+            <section className="rounded-none border-2 border-hh-ink bg-hh-cream p-5 text-hh-ink shadow-[6px_8px_0_rgba(0,0,0,0.25)]">
+              <div>
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-1.5">
+                    <Label className="font-mono text-sm font-bold tracking-[0.2em] text-hh-ink/70 uppercase">
+                      Full name
+                    </Label>
+                    <Input
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your name"
+                      className="rounded-none border-2 border-hh-ink/30 text-base focus:border-hh-ink"
+                      autoFocus
                     />
                   </div>
-                  <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-                    <span className="inline-flex items-center gap-1 font-mono text-[9px] tracking-[0.15em] text-hh-ink/60 uppercase">
-                      <Check className="size-3 text-hh-forest" /> Photo attached
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      <label className="inline-flex cursor-pointer items-center gap-1 rounded-none border-2 border-hh-ink/25 px-2.5 py-1 text-[11px] font-semibold text-hh-ink transition-colors hover:bg-hh-ink/5">
-                        <ImageUp className="size-3.5" />
-                        <span>Replace</span>
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/png,image/webp"
-                          className="sr-only"
-                          onChange={(e) => handlePhoto(e.target.files?.[0])}
-                        />
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => setPhotoUrl(undefined)}
-                        className="inline-flex items-center justify-center gap-1 rounded-none border-2 border-hh-ink/25 px-2.5 py-1 text-[11px] font-semibold text-hh-ink transition-colors hover:bg-hh-ink/5"
-                      >
-                        <X className="size-3.5" />
-                        Remove
-                      </button>
-                    </div>
+                  <div className="flex flex-col gap-1.5">
+                    <Label className="font-mono text-sm font-bold tracking-[0.2em] text-hh-ink/70 uppercase">
+                      Role / designation
+                    </Label>
+                    <Input
+                      value={designation}
+                      onChange={(e) => setDesignation(e.target.value)}
+                      placeholder="Robotics Builder"
+                      className="rounded-none border-2 border-hh-ink/30 text-base focus:border-hh-ink"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <Label className="font-mono text-sm font-bold tracking-[0.2em] text-hh-ink/70 uppercase">
+                      Organization
+                    </Label>
+                    <Input
+                      value={organization}
+                      onChange={(e) => setOrganization(e.target.value)}
+                      placeholder="Hacker House Goa"
+                      className="rounded-none border-2 border-hh-ink/30 text-base focus:border-hh-ink"
+                    />
                   </div>
                 </div>
 
-                <AdjustSlider
-                  icon={<ZoomIn className="size-3.5" />}
-                  label="Zoom"
-                  min={1}
-                  max={4}
-                  step={0.1}
-                  value={adjust.zoom}
-                  display={`${Math.round(adjust.zoom * 100)}%`}
-                  onChange={(v) => setAdjust((a) => ({ ...a, zoom: v }))}
-                />
-                <AdjustSlider
-                  icon={<MoveHorizontal className="size-3.5" />}
-                  label="Pan left / right"
-                  min={-1}
-                  max={1}
-                  step={0.02}
-                  value={adjust.x}
-                  onChange={(v) => setAdjust((a) => ({ ...a, x: v }))}
-                />
-                <AdjustSlider
-                  icon={<MoveVertical className="size-3.5" />}
-                  label="Pan up / down"
-                  min={-1}
-                  max={1}
-                  step={0.02}
-                  value={adjust.y}
-                  onChange={(v) => setAdjust((a) => ({ ...a, y: v }))}
-                />
+                <div className="mt-4 flex items-center gap-2 border-t-2 border-dashed border-hh-ink/25 pt-3">
+                  <span className="border-2 border-hh-ink bg-hh-sun px-2 py-1 font-mono text-[9px] font-bold tracking-[0.15em] text-hh-ink uppercase">
+                    Tagline
+                  </span>
+                  <p className="min-w-0 flex-1 truncate text-sm font-semibold tracking-wide text-hh-ink/75 uppercase">
+                    {"\"NO BUGS. JUST BEACHES.\""}
+                  </p>
+                </div>
+              </div>
+            </section>
 
+            {/* ═════ PHOTO + CROP ═════ */}
+            <section className="rounded-none border-2 border-hh-ink bg-hh-cream p-5 text-hh-ink shadow-[6px_8px_0_rgba(0,0,0,0.25)]">
+              <div>
+                {photoUrl ? (
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="relative size-16 shrink-0 overflow-hidden rounded-none border-2 border-hh-ink/20">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={photoUrl}
+                          alt="Profile photo"
+                          className="size-full object-cover"
+                        />
+                      </div>
+                      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                        <span className="inline-flex items-center gap-1 font-mono text-[9px] tracking-[0.15em] text-hh-ink/60 uppercase">
+                          <Check className="size-3 text-hh-forest" /> Photo
+                          attached
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          <label className="inline-flex cursor-pointer items-center gap-1 rounded-none border-2 border-hh-ink/25 px-2.5 py-1 text-[11px] font-semibold text-hh-ink transition-colors hover:bg-hh-ink/5">
+                            <ImageUp className="size-3.5" />
+                            <span>Replace</span>
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp"
+                              className="sr-only"
+                              onChange={(e) => handlePhoto(e.target.files?.[0])}
+                            />
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => setPhotoUrl(undefined)}
+                            className="inline-flex items-center justify-center gap-1 rounded-none border-2 border-hh-ink/25 px-2.5 py-1 text-[11px] font-semibold text-hh-ink transition-colors hover:bg-hh-ink/5"
+                          >
+                            <X className="size-3.5" />
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <AdjustSlider
+                      icon={<ZoomIn className="size-3.5" />}
+                      label="Zoom"
+                      min={1}
+                      max={4}
+                      step={0.1}
+                      value={adjust.zoom}
+                      display={`${Math.round(adjust.zoom * 100)}%`}
+                      onChange={(v) => setAdjust((a) => ({ ...a, zoom: v }))}
+                    />
+                    <AdjustSlider
+                      icon={<MoveHorizontal className="size-3.5" />}
+                      label="Pan left / right"
+                      min={-1}
+                      max={1}
+                      step={0.02}
+                      value={adjust.x}
+                      onChange={(v) => setAdjust((a) => ({ ...a, x: v }))}
+                    />
+                    <AdjustSlider
+                      icon={<MoveVertical className="size-3.5" />}
+                      label="Pan up / down"
+                      min={-1}
+                      max={1}
+                      step={0.02}
+                      value={adjust.y}
+                      onChange={(v) => setAdjust((a) => ({ ...a, y: v }))}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setAdjust({ zoom: 1, x: 0, y: 0 })}
+                      className="inline-flex items-center justify-center gap-1.5 self-start rounded-none border-2 border-hh-ink/25 px-3 py-1.5 text-xs font-semibold text-hh-ink transition-colors hover:bg-hh-ink/5"
+                    >
+                      <RotateCcw className="size-3.5" /> Reset adjustment
+                    </button>
+                  </div>
+                ) : (
+                  <label className="animate-hh-bob hh-bob-1 flex cursor-pointer items-center justify-center gap-2 rounded-none border-2 border-dashed border-hh-ink/40 bg-hh-ink/5 px-4 py-3 text-center transition-colors hover:border-hh-ink hover:bg-hh-ink/10">
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="sr-only"
+                      onChange={(e) => handlePhoto(e.target.files?.[0])}
+                    />
+                    {uploading ? (
+                      <Loader2 className="size-4 animate-spin text-hh-ink/60" />
+                    ) : (
+                      <ImageUp className="size-4 text-hh-ink/60" />
+                    )}
+                    <span className="text-sm font-bold text-hh-ink">
+                      Upload photo
+                    </span>
+                    <span className="text-xs text-hh-ink/60">
+                      JPEG, PNG, WebP · max 5 MB
+                    </span>
+                  </label>
+                )}
+                {uploadError && (
+                  <p className="mt-2 text-xs text-hh-pink">{uploadError}</p>
+                )}
+                {photoUrl && !photoElement && (
+                  <p className="mt-2 text-xs text-hh-ink/60">
+                    No photo slot on this template — adjustments won&apos;t show.
+                  </p>
+                )}
+              </div>
+            </section>
+          </div>
+
+          {/* RIGHT — large live ID preview */}
+          <div className="lg:sticky lg:top-24">
+            <div className="mb-3 flex items-center gap-3">
+              <p className="font-mono text-[10px] font-bold tracking-[0.25em] text-hh-pink uppercase">
+                {"// LIVE PREVIEW"}
+              </p>
+              <span className="h-px flex-1 bg-hh-cream/15" />
+              <span className="border-2 border-hh-ink bg-hh-sun px-2 py-1 font-mono text-[9px] font-bold tracking-[0.15em] text-hh-ink uppercase">
+                3:4 · Live
+              </span>
+            </div>
+            <div className="bg-hh-line-grid relative flex w-full items-start justify-center overflow-auto rounded-none border-2 border-hh-ink bg-hh-forest/60 p-6 shadow-[0_24px_60px_-24px_rgba(7,38,24,0.9)] sm:p-8">
+              <div className="shrink-0 border-2 border-hh-ink bg-hh-cream p-2">
+                <CanvasEditor
+                  ref={canvasRef}
+                  template={template}
+                  profile={profile}
+                  selectedId={null}
+                  onSelect={() => {}}
+                  onUpdateElement={() => {}}
+                  readOnly
+                  fitWidth={400}
+                />
+              </div>
+            </div>
+
+            {/* ═════ DOWNLOAD / EXPORT ═════ */}
+            <section className="mt-4 flex flex-col items-center gap-3 rounded-none border-2 border-hh-ink bg-hh-cream/95 p-4 text-hh-ink shadow-[6px_8px_0_rgba(0,0,0,0.25)]">
+              <div className="flex flex-wrap items-center justify-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setAdjust({ zoom: 1, x: 0, y: 0 })}
-                  className="inline-flex items-center justify-center gap-1.5 self-start rounded-none border-2 border-hh-ink/25 px-3 py-1.5 text-xs font-semibold text-hh-ink transition-colors hover:bg-hh-ink/5"
+                  onClick={() => generate("png")}
+                  disabled={exporting !== null}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-none border-2 border-hh-ink bg-hh-sun px-4 py-2 text-sm font-display font-extrabold tracking-wide text-hh-ink uppercase shadow-[3px_4px_0_rgba(0,0,0,0.3)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:bg-hh-sun-2 disabled:pointer-events-none disabled:opacity-50"
                 >
-                  <RotateCcw className="size-3.5" /> Reset adjustment
+                  {exporting === "png" ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Download className="size-4" />
+                  )}
+                  {exporting === "png" ? "Generating…" : "Download · PNG"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => generate("pdf")}
+                  disabled={exporting !== null}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-none border-2 border-hh-ink/30 px-4 py-2 text-sm font-bold tracking-wide text-hh-ink uppercase transition-colors hover:border-hh-ink hover:bg-hh-ink/5 disabled:pointer-events-none disabled:opacity-50"
+                >
+                  {exporting === "pdf" ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <FileText className="size-4" />
+                  )}
+                  {exporting === "pdf" ? "Exporting…" : "Download · PDF"}
+                </button>
+                <button
+                  type="button"
+                  onClick={shareOnX}
+                  disabled={sharing}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-none border-2 border-hh-ink bg-hh-ink px-4 py-2 text-sm font-bold tracking-wide text-hh-cream uppercase transition-colors hover:bg-hh-forest disabled:pointer-events-none disabled:opacity-50"
+                >
+                  {sharing ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Share2 className="size-4" />
+                  )}
+                  Share on X
                 </button>
               </div>
-            ) : (
-              <label className="flex cursor-pointer items-center justify-center gap-2 rounded-none border-2 border-dashed border-hh-ink/40 bg-hh-ink/5 px-4 py-3 text-center transition-colors hover:border-hh-ink hover:bg-hh-ink/10">
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  className="sr-only"
-                  onChange={(e) => handlePhoto(e.target.files?.[0])}
-                />
-                {uploading ? (
-                  <Loader2 className="size-4 animate-spin text-hh-ink/60" />
-                ) : (
-                  <ImageUp className="size-4 text-hh-ink/60" />
-                )}
-                <span className="text-sm font-bold text-hh-ink">Upload photo</span>
-                <span className="text-xs text-hh-ink/60">
-                  JPEG, PNG, WebP · max 5 MB
-                </span>
-              </label>
-            )}
-            {uploadError && (
-              <p className="mt-2 text-xs text-hh-pink">{uploadError}</p>
-            )}
-            {photoUrl && !photoElement && (
-              <p className="mt-2 text-xs text-hh-ink/60">
-                No photo slot on this template — adjustments won&apos;t show.
+              <p className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.15em] text-hh-ink/55 uppercase">
+                <QrCode className="size-3.5" /> ID {id || "generating…"} · QR
+                auto-embeds · verify.hhgoa.in/{id || "hh-goa"}
               </p>
-            )}
+            </section>
           </div>
-        </section>
-
-        {/* ═════ ID card demo ═════ */}
-        <section className="min-w-0">
-          <div className="mb-3 flex items-center gap-3">
-            <p className="font-mono text-[10px] font-bold tracking-[0.25em] text-hh-cream uppercase">
-              {"// ID card demo"}
-            </p>
-            <span className="h-px flex-1 bg-hh-cream/15" />
-            <span className="border-2 border-hh-ink bg-hh-sun px-2 py-1 font-mono text-[9px] font-bold tracking-[0.15em] text-hh-ink uppercase">
-              3:4 · Live
-            </span>
-          </div>
-          <div className="bg-hh-line-grid flex w-full items-start justify-center overflow-auto rounded-none border-2 border-hh-ink bg-hh-forest/60 p-6 sm:p-10">
-            <div className="shrink-0 border-2 border-hh-ink bg-hh-cream p-2 shadow-[0_24px_60px_-24px_rgba(7,38,24,0.9)]">
-              <CanvasEditor
-                ref={canvasRef}
-                template={template}
-                profile={profile}
-                selectedId={null}
-                onSelect={() => {}}
-                onUpdateElement={() => {}}
-                readOnly
-                fitWidth={360}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* ═════ DOWNLOAD — small, bottom of the page ═════ */}
-        <section className="flex flex-col items-center gap-3 rounded-none border-2 border-hh-ink bg-hh-cream/95 p-4 text-hh-ink shadow-[6px_8px_0_rgba(0,0,0,0.25)]">
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <button
-              type="button"
-              onClick={() => generate("png")}
-              disabled={exporting !== null}
-              className="inline-flex items-center justify-center gap-1.5 rounded-none border-2 border-hh-ink bg-hh-sun px-4 py-2 text-sm font-display font-extrabold tracking-wide text-hh-ink uppercase shadow-[3px_4px_0_rgba(0,0,0,0.3)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:bg-hh-sun-2 disabled:pointer-events-none disabled:opacity-50"
-            >
-              {exporting === "png" ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Download className="size-4" />
-              )}
-              {exporting === "png" ? "Generating…" : "Download · PNG"}
-            </button>
-            <button
-              type="button"
-              onClick={() => generate("pdf")}
-              disabled={exporting !== null}
-              className="inline-flex items-center justify-center gap-1.5 rounded-none border-2 border-hh-ink/30 px-4 py-2 text-sm font-bold tracking-wide text-hh-ink uppercase transition-colors hover:border-hh-ink hover:bg-hh-ink/5 disabled:pointer-events-none disabled:opacity-50"
-            >
-              {exporting === "pdf" ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <FileText className="size-4" />
-              )}
-              {exporting === "pdf" ? "Exporting…" : "Download · PDF"}
-            </button>
-            <button
-              type="button"
-              onClick={shareOnX}
-              disabled={sharing}
-              className="inline-flex items-center justify-center gap-1.5 rounded-none border-2 border-hh-ink bg-hh-ink px-4 py-2 text-sm font-bold tracking-wide text-hh-cream uppercase transition-colors hover:bg-hh-forest disabled:pointer-events-none disabled:opacity-50"
-            >
-              {sharing ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Share2 className="size-4" />
-              )}
-              Share on X
-            </button>
-          </div>
-          <p className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.15em] text-hh-ink/55 uppercase">
-            <QrCode className="size-3.5" /> ID {id || "generating…"} · QR auto-embeds
-            · verify.hhgoa.in/{id || "hh-goa"}
-          </p>
         </section>
       </div>
     </div>

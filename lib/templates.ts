@@ -29,8 +29,8 @@ const CARD_W = 600;
 const CARD_H = 375;
 const PORTRAIT_W = 900;
 const PORTRAIT_H = 1350;
-const HH_CARD_W = 750;
-const HH_CARD_H = 1000;
+const HH_CARD_W = 1122;
+const HH_CARD_H = 1402;
 
 /** Corner brackets (L-marks) around a rectangular area. Painted in array order. */
 function cornerBrackets(
@@ -310,12 +310,22 @@ function baseElements(seed: TemplateSeed): Palette {
 }
 
 const HH_CREAM = "#fdf6e3";
-const HH_SUN = "#fff4c4";
-const HH_GOLD = "#ffe08a";
-const HH_PINK = "#e8407c";
 const HH_MUTED = "#9db8a4";
-const HH_TRACK = "rgba(253,246,227,0.14)";
+const HH_SERIF = "'Times New Roman', Times, serif";
 
+/**
+ * Hacker House Goa 2026 credential over `public/templates/hh-goa-id-card.png`.
+ *
+ * The PNG is the fixed illustrated artwork (deep green + tropical sun band +
+ * bottom cream panel). Only the dynamic fields are overlaid:
+ *
+ *  · HACKER HOUSE wordmark + floating GOA stamp — centred on the empty header
+ *  · circular profile photo — cream circle centred at (552, 509), r≈131
+ *  · name / role / tagline / serial — centred on the sun band (y≈660–930)
+ *  · QR — cream square placeholder at (≈488–616, 940–1080)
+ *
+ * The bottom panel is intentionally left clear.
+ */
 function hhGoaElements(_seed: TemplateSeed): Palette {
   void _seed;
 
@@ -339,133 +349,159 @@ function hhGoaElements(_seed: TemplateSeed): Palette {
       uppercase: true,
     });
 
+  // centre of the circular photo frame in the PNG artwork
+  const photoCx = 552;
+  const photoCy = 509;
+  const photoR = 125;
+  const photoSize = photoR * 2;
+
   const elements: CardElement[] = [
-    // ── PROFILE PHOTO — centered focal point ──
-    // baked bg already carries HACKER HOUSE // GOA + gold frame (y≥88)
+   // ── HEADER — HhGoaLogo mark, stacked above one centred wordmark ──
+    // Same asset as components/branding/HhGoaLogo.tsx. Stacked (icon above
+    // text) instead of inline, so the wordmark always has the card's full
+    // centred width to lay out in and can never wrap into or collide with
+    // the icon again.
+    el({
+      kind: "image",
+      source: "upload",
+      url: "/branding/goa-logo.svg",
+      x: 566,
+      y: 170,
+      width: 75,
+      height: 75,
+    }),
+    el({
+      kind: "text",
+      text: "HACKER HOUSE",
+      x: 111,
+      y: 130,
+      width: 900,
+      height: 70,
+      fontSize: 84,
+      fontWeight: 800,
+      color: "#ffe08a",
+      align: "center",
+      verticalAlign: "middle",
+      letterSpacing: 4,
+      fontFamily: HH_SERIF,
+      uppercase: true,
+    }),
+
+    // ── CIRCULAR PROFILE PHOTO — centred on the baked-in cream circle ──
     el({
       kind: "image",
       source: "photo",
-      x: 245,
-      y: 140,
-      width: 260,
-      height: 260,
-      cornerRadius: 3,
+      x: photoCx - photoR,
+      y: photoCy - photoR,
+      width: photoSize,
+      height: photoSize,
+      cornerRadius: photoR,
     }),
-    ...cornerBrackets(el, 242, 137, 266, 266, 4, HH_GOLD, 22),
 
-    // ── NAME ──
-    glyph(56, 452, 220, 11, "NAME //", HH_PINK, "left", 800),
+    // ── NAME — centred on the sun band, directly under the photo ──
     el({
       kind: "text",
       text: "{{name}}",
-      x: 56,
-      y: 470,
-      width: 638,
-      height: 58,
-      fontSize: 40,
+      x: 111,
+      y: 720,
+      width: 900,
+      height: 60,
+      fontSize: 42,
       fontWeight: 800,
-      color: HH_CREAM,
-      align: "left",
+      color: "#12301f",
+      align: "center",
       verticalAlign: "middle",
       letterSpacing: -0.5,
-      lineHeight: 0.95,
+      fontFamily: "Fredoka",
       uppercase: true,
     }),
-    el({ kind: "rect", x: 56, y: 540, width: 638, height: 2, fill: HH_TRACK }),
 
-    // ── ROLE ──
-    glyph(56, 558, 220, 11, "ROLE //", HH_PINK, "left", 800),
+    // ── ROLE — centred on the card, 2 sizes bigger than the default ──
     el({
       kind: "text",
       text: "{{designation}}",
-      x: 56,
-      y: 578,
-      width: 480,
-      height: 32,
-      fontSize: 22,
+      x: 111,
+      y: 795,
+      width: 900,
+      height: 46,
+      fontSize: 32,
       fontWeight: 800,
-      color: HH_GOLD,
-      align: "left",
-      verticalAlign: "middle",
-      letterSpacing: 2,
-      uppercase: true,
-    }),
-
-    // ── ORGANIZATION ──
-    glyph(56, 630, 280, 11, "ORGANIZATION //", HH_PINK, "left", 800),
-    el({
-      kind: "text",
-      text: "{{organization}}",
-      x: 56,
-      y: 650,
-      width: 480,
-      height: 28,
-      fontSize: 16,
-      fontWeight: 700,
-      color: HH_CREAM,
-      align: "left",
-      verticalAlign: "middle",
-      letterSpacing: 2,
-      uppercase: true,
-    }),
-
-    // ── DIVIDER ──
-    el({ kind: "rect", x: 56, y: 712, width: 638, height: 1, fill: HH_TRACK }),
-
-    // ── ID (left) ──
-    glyph(56, 740, 160, 11, "ID //", HH_PINK, "left", 800),
-    el({
-      kind: "text",
-      text: "{{id}}",
-      x: 56,
-      y: 762,
-      width: 300,
-      height: 40,
-      fontSize: 28,
-      fontWeight: 800,
-      color: HH_SUN,
-      align: "left",
-      verticalAlign: "middle",
-      letterSpacing: 2,
-      uppercase: true,
-    }),
-
-    // ── QR CODE — dedicated compact area (right) ──
-    glyph(508, 726, 210, 10, "VERIFY // SCAN", HH_PINK, "left", 800),
-    el({
-      kind: "rect",
-      x: 512,
-      y: 742,
-      width: 140,
-      height: 140,
-      fill: "#ffffff",
-      cornerRadius: 2,
-    }),
-    ...panelBorder(el, 512, 742, 140, 140, 2, HH_GOLD),
-    el({
-      kind: "qr",
-      value: "",
-      x: 522,
-      y: 752,
-      width: 120,
-      height: 120,
-    }),
-
-    // ── ROLE TAGLINE — small, secondary ──
-    el({
-      kind: "text",
-      text: '"{{tagline}}"',
-      x: 56,
-      y: 902,
-      width: 638,
-      height: 28,
-      fontSize: 13,
-      fontWeight: 700,
-      color: HH_MUTED,
+      color: "#0c5c34",
       align: "center",
       verticalAlign: "middle",
       letterSpacing: 2,
       uppercase: true,
+    }),
+
+    // ── BUILDER META ──
+el({
+  kind: "text",
+  text: "BUILDER // HACKER HOUSE GOA",
+  x: 111,
+  y: 885,
+  width: 900,
+  height: 28,
+  fontSize: 18,
+  fontWeight: 700,
+  color: "#244a05",
+  align: "center",
+  verticalAlign: "middle",
+  letterSpacing: 2,
+  uppercase: true,
+}),
+
+el({
+  kind: "text",
+  text: "{{id}}",
+  x: 111,
+  y: 850,
+  width: 900,
+  height: 30,
+  fontSize: 22,
+  fontWeight: 700,
+  color: "#244a05",
+  align: "center",
+  verticalAlign: "middle",
+  letterSpacing: 2,
+  uppercase: true,
+}),
+
+    // ── TAGLINE — subtle, role-derived, slightly below the role ──
+
+   el({
+      kind: "text",
+      text: '"{{tagline}}"',
+      x: 210,
+      y: 1250,
+      width: 700,
+      height: 30,
+      fontSize: 35,
+      fontWeight: 700,
+      color: "#244a05",
+      align: "center",
+      verticalAlign: "middle",
+      letterSpacing: 2,
+      uppercase: true,
+    }),
+
+    // ── QR — cream square placeholder in the lower-center area ──
+    el({
+      kind: "rect",
+      x: 488,
+      y: 940,
+      width: 128,
+      height: 128,
+      fill: "#ffffff",
+      cornerRadius: 2,
+    }),
+    ...panelBorder(el, 488, 940, 128, 128, 2, "#d9b25f"),
+    el({
+      kind: "qr",
+      value: "",
+      x: 498,
+      y: 950,
+      width: 108,
+      height: 108,
     }),
   ];
 
@@ -856,7 +892,7 @@ export function buildTemplate(seed: TemplateSeed): CardTemplate {
   const backgroundImage = isPortrait
     ? "/templates/goa-tropical-bg.svg"
     : isHhGoa
-      ? "/templates/hh-goa-card-bg.svg"
+      ? "/templates/hh-goa-id-card.png"
       : undefined;
 
   return {

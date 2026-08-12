@@ -83,7 +83,7 @@ function TextElementNode({
       text={text}
       fontSize={element.fontSize}
       fontStyle={element.fontWeight >= 600 ? "bold" : "normal"}
-      fontFamily={DEFAULT_FONT}
+      fontFamily={element.fontFamily ?? DEFAULT_FONT}
       fill={element.color}
       align={element.align}
       verticalAlign={element.verticalAlign}

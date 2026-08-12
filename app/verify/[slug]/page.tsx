@@ -5,6 +5,7 @@ import Link from "next/link"
 import { BadgeCheck, Ban, CalendarDays, Loader2, ShieldCheck } from "lucide-react"
 
 import CanvasEditor from "@/components/editor/CanvasEditor"
+import { HhFullLogo } from "@/components/branding/HhFullLogo"
 import HHGoaBackground from "@/components/landing/HHGoaBackground"
 import type { CardTemplate, ProfileData } from "@/types/template"
 
@@ -56,14 +57,8 @@ function VerifyCardView({ slug }: { slug: string }) {
 
       <header className="relative z-30 border-b border-hh-cream/10 bg-hh-forest/70 text-hh-cream backdrop-blur-sm">
         <div className="mx-auto flex h-14 w-full max-w-3xl items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="relative flex size-7 items-center justify-center rounded-none bg-hh-sun">
-              <span className="absolute inset-[3px] rounded-none border border-hh-ink/30" />
-              <span className="font-display text-xs font-bold text-hh-ink">H</span>
-            </span>
-            <span className="font-display text-[15px] font-semibold tracking-tight">
-              HACKER <span className="text-hh-sun">HOUSE</span>
-            </span>
+          <Link href="/" className="flex items-center">
+            <HhFullLogo textClassName="text-[clamp(1rem,2.4vw,1.5rem)]" goaClassName="h-[0.5em] w-auto" />
           </Link>
           <span className="flex items-center gap-1.5 font-mono text-xs font-bold tracking-[0.15em] text-hh-sun uppercase">
             <ShieldCheck className="size-3.5" /> Verification

@@ -19,6 +19,8 @@ export interface TextElementConfig extends ElementBase {
   fontSize: number;
   fontWeight: number;
   color: string;
+  /** Font stack rendered on the canvas (defaults to the editor sans stack). */
+  fontFamily?: string;
   align: ElementAlign;
   verticalAlign: ElementVerticalAlign;
   letterSpacing?: number;

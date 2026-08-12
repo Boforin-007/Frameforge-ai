@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import { HhGoaLogo } from "@/components/branding/HhGoaLogo"
+import { HhFullLogo } from "@/components/branding/HhFullLogo"
 
 const APP_LINKS = [
   { label: "Create ID", href: "/dashboard" },
@@ -15,11 +15,8 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr]">
           <div>
             <div className="flex items-center gap-3">
-              <HhGoaLogo className="h-9 w-auto" />
+              <HhFullLogo textClassName="text-[clamp(1.3rem,3vw,2rem)]" goaClassName="h-[0.5em] w-auto" />
               <span className="flex flex-col leading-none">
-                <span className="font-display text-lg font-extrabold tracking-tight">
-                  HACKER <span className="text-hh-sun">HOUSE</span>
-                </span>
                 <span className="mt-1 font-mono text-[8px] tracking-[0.3em] text-hh-cream/50 uppercase">
                   Goa // Identity generator
                 </span>

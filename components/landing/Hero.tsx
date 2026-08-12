@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react"
 
-import { HhGoaLogo } from "@/components/branding/HhGoaLogo"
+import { HhFullLogo } from "@/components/branding/HhFullLogo"
 import { SharpLink } from "@/components/landing/Editorial"
 
 export function Hero() {
@@ -11,28 +11,28 @@ export function Hero() {
       <div aria-hidden className="hh-vignette absolute inset-0" />
       <div aria-hidden className="hh-halftone absolute -bottom-24 -right-20 size-80 opacity-25" />
 
-      <div className="relative mx-auto flex max-w-6xl flex-col items-center px-4 pt-14 pb-16 text-center sm:px-6 sm:pt-20 lg:pt-24 lg:pb-24">
+      <div className="relative mx-auto flex max-w-6xl flex-col items-center px-4 pt-14 pb-6 text-center sm:px-6 sm:pt-20 lg:pt-24">
         {/* event dateline */}
         <p className="font-mono text-[10px] tracking-[0.35em] text-hh-cream/60 uppercase sm:text-xs">
           Goa, India · 28–31 Oct 2026
         </p>
+      </div>
 
-        {/* HACKER HOUSE / GOA — editorial serif headline with Goa logo stamped mid-title */}
-        <div className="relative mt-6 sm:mt-8">
-          <h1 className="relative font-serif font-bold uppercase text-hh-sun leading-[0.82] tracking-tight">
-<span className="block text-center text-[15vw] sm:text-8xl lg:text-[9rem]">
-                HACKER
-              </span>
-            <span className="relative block text-center text-[15vw] sm:text-8xl lg:text-[9rem]">
-              HOUSE
-              <HhGoaLogo className="absolute -top-8 left-1/2 h-14 w-auto -translate-x-1/2 drop-shadow-[0_4px_0_rgba(11,15,12,0.9)] sm:-top-10 sm:h-20 lg:-top-12 lg:h-24" />
-            </span>
-          </h1>
-        </div>
+      {/* HACKER HOUSE — oversized editorial poster wordmark, GOA logo stamped over the R */}
+      <div className="relative">
+        <h1
+          aria-label="Hacker House Goa"
+          className="hh-title-poster font-serif font-bold tracking-tight text-hh-sun uppercase"
+        >
+          <HhFullLogo textClassName="text-[clamp(2.25rem,10.8vw,9.5rem)] leading-[0.82]" />
+        </h1>
+        <div aria-hidden className="hh-halftone absolute -top-10 -left-8 size-72 opacity-30" />
+      </div>
 
+      <div className="relative mx-auto flex max-w-6xl flex-col items-center px-4 pt-6 pb-16 text-center sm:px-6 lg:pb-24">
         {/* actions */}
         <div className="relative mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <SharpLink href="/dashboard">
+          <SharpLink href="/dashboard" className="animate-hh-bob hh-bob-1">
             One-click ID generator <ArrowRight className="size-4" />
           </SharpLink>
         </div>

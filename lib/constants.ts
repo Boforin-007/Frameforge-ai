@@ -15,7 +15,7 @@ export const TEMPLATE_SEEDS: TemplateSeed[] = [
     name: "Hacker House Goa 2026",
     category: "Event",
     description:
-      "Compact portrait credential in the Hacker House — Goa language: deep green, gold sun over the ocean, a clean gold frame and an editorial HACKER HOUSE / GOA lockup. Photo, ID, role, QR and role tagline stay replaceable.",
+      "Portrait credential built on the official Hacker House — Goa card artwork: deep green + tropical sun band, a large circular photo frame, and a cream QR panel. Photo, name, role, tagline, serial and QR stay replaceable over the fixed illustration.",
     accent: "#e8407c",
   },
 ]
