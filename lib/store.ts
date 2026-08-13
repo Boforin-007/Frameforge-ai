@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-export const CARD_FORMATS = ["png", , "pdf", ] as const;
+export const CARD_FORMATS = ["png", "jpg", "pdf", "zip"] as const;
 export type CardFormat = (typeof CARD_FORMATS)[number];
 
 const DATA_DIR = path.join(process.cwd(), "storage", "data");
