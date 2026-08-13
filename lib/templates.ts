@@ -351,8 +351,8 @@ function hhGoaElements(_seed: TemplateSeed): Palette {
 
   // centre of the circular photo frame in the PNG artwork
   const photoCx = 552;
-  const photoCy = 509;
-  const photoR = 125;
+  const photoCy = 535;
+  const photoR = 130;
   const photoSize = photoR * 2;
 
   const elements: CardElement[] = [
@@ -436,7 +436,7 @@ function hhGoaElements(_seed: TemplateSeed): Palette {
     // ── BUILDER META ──
 el({
   kind: "text",
-  text: "BUILDER // HACKER HOUSE GOA",
+  text: "HACKER HOUSE GOA",
   x: 111,
   y: 885,
   width: 900,
@@ -470,7 +470,7 @@ el({
 
    el({
       kind: "text",
-      text: '"{{tagline}}"',
+      text: '{{tagline}}',
       x: 210,
       y: 1250,
       width: 700,
