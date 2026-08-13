@@ -470,7 +470,7 @@ el({
 
    el({
       kind: "text",
-      text: '"{{tagline}}"',
+      text: '{{tagline}}',
       x: 210,
       y: 1250,
       width: 700,
