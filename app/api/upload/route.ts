@@ -1,27 +1,33 @@
-import { randomUUID } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { NextResponse } from "next/server";
 import sharp from "sharp";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-const ACCEPTED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
-const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
+const ACCEPTED_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+]);
 
 export async function POST(request: Request) {
-  const kind = request.headers.get("x-upload-kind") ?? "photo";
-
   let formData: FormData;
+
   try {
     formData = await request.formData();
   } catch {
-    return NextResponse.json({ error: "Invalid form data." }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid form data." },
+      { status: 400 }
+    );
   }
 
   const file = formData.get("file");
+
   if (!(file instanceof File)) {
-    return NextResponse.json({ error: "No file provided." }, { status: 400 });
+    return NextResponse.json(
+      { error: "No file provided." },
+      { status: 400 }
+    );
   }
 
   if (file.size > MAX_FILE_SIZE) {
@@ -33,21 +39,28 @@ export async function POST(request: Request) {
 
   if (!ACCEPTED_TYPES.has(file.type)) {
     return NextResponse.json(
-      { error: "Unsupported file type. Use JPEG, PNG, or WebP." },
+      {
+        error: "Unsupported file type. Use JPEG, PNG, or WebP.",
+      },
       { status: 415 }
     );
   }
 
   try {
+    // Read uploaded image into memory.
     const buffer = Buffer.from(await file.arrayBuffer());
 
+    // Process the image entirely in memory.
+    // Nothing is written to the Vercel filesystem.
     const image = sharp(buffer).rotate().resize({
       width: 1200,
       height: 1200,
       fit: "inside",
       withoutEnlargement: true,
     });
+
     const meta = await image.metadata();
+
     if (!meta.format) {
       return NextResponse.json(
         { error: "File is not a valid image." },
@@ -55,15 +68,27 @@ export async function POST(request: Request) {
       );
     }
 
+    // Preserve PNG as PNG.
+    // Convert JPEG/WebP to WebP for a smaller payload.
     const isPng = meta.format === "png";
-    const filename = `${kind}-${randomUUID()}.${isPng ? "png" : "webp"}`;
-    const output = isPng ? await image.png().toBuffer() : await image.webp({ quality: 88 }).toBuffer();
 
-       await mkdir(UPLOADS_DIR, { recursive: true });
-    await writeFile(path.join(UPLOADS_DIR, filename), output);
+    const output = isPng
+      ? await image.png().toBuffer()
+      : await image.webp({ quality: 88 }).toBuffer();
+
+    // Return the processed image directly to the browser.
+    // This avoids writing to /public/uploads, which is not
+    // a persistent writable filesystem on Vercel.
+    const mimeType = isPng ? "image/png" : "image/webp";
+
+    const dataUrl = `data:${mimeType};base64,${output.toString(
+      "base64"
+    )}`;
 
     return NextResponse.json(
-      { url: `/uploads/${filename}` },
+      {
+        url: dataUrl,
+      },
       { status: 201 }
     );
   } catch (error) {
@@ -71,7 +96,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : String(error),
+        error:
+          error instanceof Error
+            ? error.message
+            : "Something went wrong processing the image.",
       },
       { status: 500 }
     );
