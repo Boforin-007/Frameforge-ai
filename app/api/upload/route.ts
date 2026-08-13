@@ -59,17 +59,21 @@ export async function POST(request: Request) {
     const filename = `${kind}-${randomUUID()}.${isPng ? "png" : "webp"}`;
     const output = isPng ? await image.png().toBuffer() : await image.webp({ quality: 88 }).toBuffer();
 
-    await mkdir(UPLOADS_DIR, { recursive: true });
+       await mkdir(UPLOADS_DIR, { recursive: true });
     await writeFile(path.join(UPLOADS_DIR, filename), output);
 
-    return NextResponse.json({ url: `/uploads/${filename}` }, { status: 201 });
+    return NextResponse.json(
+      { url: `/uploads/${filename}` },
+      { status: 201 }
+    );
   } catch (error) {
-  console.error("Upload failed:", error);
+    console.error("Upload failed:", error);
 
-  return NextResponse.json(
-    {
-      error: error instanceof Error ? error.message : String(error),
-    },
-    { status: 500 }
-  );
+    return NextResponse.json(
+      {
+        error: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 }
+    );
+  }
 }
