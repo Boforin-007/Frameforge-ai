@@ -8,8 +8,7 @@ import { HhFullLogo } from "@/components/branding/HhFullLogo"
 
 const NAV_LINKS = [
   { label: "Create ID", href: "/dashboard" },
-  { label: "Templates", href: "/templates" },
-  { label: "Downloads", href: "/downloads" },
+   { label: "Downloads", href: "/downloads" },
 ] as const
 
 export function Navbar() {
