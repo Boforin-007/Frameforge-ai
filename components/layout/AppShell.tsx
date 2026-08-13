@@ -11,6 +11,7 @@ import { HhFullLogo } from "@/components/branding/HhFullLogo"
 
 const APP_LINKS = [
   { label: "Create ID", href: "/dashboard" },
+  { label: "Templates", href: "/templates" },
   { label: "Downloads", href: "/downloads" },
 ] as const
 
