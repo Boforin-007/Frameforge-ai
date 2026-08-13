@@ -64,10 +64,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ url: `/uploads/${filename}` }, { status: 201 });
   } catch (error) {
-    console.error("Upload failed:", error);
-    return NextResponse.json(
-      { error: "Something went wrong processing the image." },
-      { status: 500 }
-    );
-  }
+  console.error("Upload failed:", error);
+
+  return NextResponse.json(
+    {
+      error: error instanceof Error ? error.message : String(error),
+    },
+    { status: 500 }
+  );
 }
